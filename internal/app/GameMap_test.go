@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
@@ -15,29 +16,27 @@ type gameMapTest struct {
 	suite.Suite
 }
 
-func (suite *gameMapTest) Test_Create_noParameters_newMapCreated() {
-	gameMap := app.GameMap{}.Create()
+func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithHeightAndWidth() {
+	for id, dataset := range suite.dataset() {
+		gameMap := app.GameMap{}.Create(dataset.expectedHeight, dataset.expectedWidth)
+		height, width := gameMap.GetHeightAndWidth()
 
-	assert.NotNil(suite.T(), gameMap)
-
-	// for id, dataset := range suite.dataset() {
-	// 	url := appMetricaService.SubstitutePlaceholders(
-	// 		dataset.foo,
-	// 		dataset.parameters,
-	// 	)
-	//
-	// 	assert.Equal(suite.T(), dataset.bar, url, fmt.Sprintf("dataset #%v", id), dataset)
-	// }
+		assert.NotNil(suite.T(), gameMap)
+		assert.Equal(suite.T(), dataset.expectedHeight, height, fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.Equal(suite.T(), dataset.expectedWidth, width, fmt.Sprintf("Dataset %v %#v", id, dataset))
+	}
 }
 
 func (suite *gameMapTest) dataset() []struct {
-	foo string
-	bar string
+	expectedHeight int
+	expectedWidth  int
 } {
 	return []struct {
-		foo string
-		bar string
+		expectedHeight int
+		expectedWidth  int
 	}{
-		{"", ""},
+		{1, 1},
+		{1, 2},
+		{2, 2},
 	}
 }
