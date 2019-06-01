@@ -16,10 +16,10 @@ type gameMapTest struct {
 	suite.Suite
 }
 
-func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithHeightAndWidth() {
-	for id, dataset := range suite.dataset() {
+func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithExpectedSize() {
+	for id, dataset := range suite.getCreateMapSize() {
 		gameMap := app.GameMap{}.Create(dataset.expectedHeight, dataset.expectedWidth)
-		height, width := gameMap.GetHeightAndWidth()
+		height, width := gameMap.Size()
 
 		assert.NotNil(suite.T(), gameMap)
 		assert.Equal(suite.T(), dataset.expectedHeight, height, fmt.Sprintf("Dataset %v %#v", id, dataset))
@@ -27,7 +27,16 @@ func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithHeightAndWidt
 	}
 }
 
-func (suite *gameMapTest) dataset() []struct {
+func (suite *gameMapTest) Test_GetRoomId_gameMapWithRooms_roomReturned() {
+	for id, dataset := range suite.getRooms() {
+		gameMap := app.GameMap{}.Create(dataset.x, dataset.y)
+		roomId := gameMap.GetRoomId(dataset.x, dataset.y)
+
+		assert.Equal(suite.T(), dataset.roomId, roomId, fmt.Sprintf("Dataset %v %#v", id, dataset))
+	}
+}
+
+func (suite *gameMapTest) getCreateMapSize() []struct {
 	expectedHeight int
 	expectedWidth  int
 } {
@@ -38,5 +47,25 @@ func (suite *gameMapTest) dataset() []struct {
 		{1, 1},
 		{1, 2},
 		{2, 2},
+		{10, 20},
+	}
+}
+
+func (suite *gameMapTest) getRooms() []struct {
+	x      int
+	y      int
+	roomId string
+} {
+	return []struct {
+		x      int
+		y      int
+		roomId string
+	}{
+		{1, 1, "1.1"},
+		{1, 2, "1.2"},
+		{2, 2, "2.2"},
+		{12, 23, "12.23"},
+		{1, 23, "1.23"},
+		{12, 3, "12.3"},
 	}
 }
