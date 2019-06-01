@@ -25,6 +25,6 @@ func (gameMap *GameMap) Size() (height int, width int) {
 	return len(gameMap.rooms), len(gameMap.rooms[len(gameMap.rooms)])
 }
 
-func (gameMap *GameMap) GetRoomId(x int, y int) string {
+func (gameMap *GameMap) RoomId(x int, y int) string {
 	return gameMap.rooms[x][y]
 }

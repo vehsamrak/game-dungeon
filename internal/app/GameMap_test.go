@@ -27,10 +27,11 @@ func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithExpectedSize(
 	}
 }
 
-func (suite *gameMapTest) Test_GetRoomId_gameMapWithRooms_roomReturned() {
+func (suite *gameMapTest) Test_RoomId_gameMapWithRooms_roomReturned() {
 	for id, dataset := range suite.getRooms() {
 		gameMap := app.GameMap{}.Create(dataset.x, dataset.y)
-		roomId := gameMap.GetRoomId(dataset.x, dataset.y)
+
+		roomId := gameMap.RoomId(dataset.x, dataset.y)
 
 		assert.Equal(suite.T(), dataset.roomId, roomId, fmt.Sprintf("Dataset %v %#v", id, dataset))
 	}
