@@ -20,9 +20,9 @@ func (*CutTreeCommand) Name() string {
 func (command *CutTreeCommand) Execute(character Character, arguments ...interface{}) (err error) {
 	room := command.roomRepository.FindByXY(character.X(), character.Y())
 
-	if room != nil && command.checkHasTools(character) && command.checkRoomType(room) {
+	if room != nil && character.HasItemFlag(app.ItemFlagCutTree) && room.HasFlag(app.RoomFlagHasTrees) {
 		wood := app.Item{}.Create()
-		wood.AddType(app.ItemTypeResourceWood)
+		wood.AddFlag(app.ItemFlagResourceWood)
 
 		character.AddItem(wood)
 	} else {
@@ -33,20 +33,9 @@ func (command *CutTreeCommand) Execute(character Character, arguments ...interfa
 }
 
 func (command *CutTreeCommand) checkHasTools(character Character) bool {
-	return character.HasType(app.ItemTypeCutTree)
+	return character.HasItemFlag(app.ItemFlagCutTree)
 }
 
-func (command *CutTreeCommand) checkRoomType(room *app.Room) bool {
-	typesWithTrees := []string{
-		app.RoomTypeForest,
-		app.RoomTypeDeepForest,
-	}
-
-	for _, typeWithTree := range typesWithTrees {
-		if room.HasType(typeWithTree) {
-			return true
-		}
-	}
-
-	return false
+func (command *CutTreeCommand) checkRoomFlags(room *app.Room) bool {
+	return room.HasFlag(app.RoomFlagHasTrees)
 }

@@ -41,15 +41,5 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 }
 
 func (command *MoveCommand) checkRoomMobility(room *app.Room) bool {
-	unmovableTypes := []string{
-		app.RoomTypeUnfordable,
-	}
-
-	for _, allowedRoomType := range unmovableTypes {
-		if room.HasType(allowedRoomType) {
-			return false
-		}
-	}
-
-	return true
+	return !room.HasFlag(app.RoomFlagUnfordable)
 }

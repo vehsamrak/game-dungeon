@@ -10,5 +10,5 @@ type Character interface {
 	Inventory() []*app.Item
 	AddItems(items []*app.Item)
 	AddItem(item *app.Item)
-	HasType(itemType string) bool
+	HasItemFlag(itemFlag string) bool
 }

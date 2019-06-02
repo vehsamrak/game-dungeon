@@ -7,9 +7,9 @@ type Character struct {
 	inventory []*Item
 }
 
-func (character *Character) HasType(itemType string) bool {
+func (character *Character) HasItemFlag(itemFlag string) bool {
 	for _, item := range character.inventory {
-		if item.HasType(itemType) {
+		if item.HasFlag(itemFlag) {
 			return true
 		}
 	}

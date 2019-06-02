@@ -39,9 +39,9 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	expectedX      int
 	expectedY      int
 } {
-	getRoomRepositoryWithSingleRoom := func(x int, y int, roomType string) app.RoomRepository {
+	getRoomRepositoryWithSingleRoom := func(x int, y int, roomFlag string) app.RoomRepository {
 		room := app.Room{}.Create(x, y)
-		room.AddType(roomType)
+		room.AddFlag(roomFlag)
 
 		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 	}
@@ -52,14 +52,14 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		expectedX      int
 		expectedY      int
 	}{
-		{"north", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
-		{"south", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
-		{"east", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
-		{"west", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
-		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeRoad), -1, 0},
-		{"south", getRoomRepositoryWithSingleRoom(1, 0, app.RoomTypeRoad), 1, 0},
-		{"east", getRoomRepositoryWithSingleRoom(0, 1, app.RoomTypeRoad), 0, 1},
-		{"west", getRoomRepositoryWithSingleRoom(0, -1, app.RoomTypeRoad), 0, -1},
-		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeUnfordable), 0, 0},
+		{"north", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{"south", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{"east", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{"west", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagRoad), -1, 0},
+		{"south", getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0},
+		{"east", getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1},
+		{"west", getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1},
+		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagUnfordable), 0, 0},
 	}
 }

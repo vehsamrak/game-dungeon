@@ -29,18 +29,18 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError()
 
 func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {
 	axe := app.Item{}.Create()
-	axe.AddType(app.ItemTypeCutTree)
+	axe.AddFlag(app.ItemFlagCutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
-	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomTypeForest})
+	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomFlagHasTrees})
 	command := commands.CutTreeCommand{}.Create(roomRepository)
 	characterItemsCountBeforeCommand := len(character.Inventory())
-	characterHasWoodBeforeCommand := character.HasType(app.ItemTypeResourceWood)
+	characterHasWoodBeforeCommand := character.HasItemFlag(app.ItemFlagResourceWood)
 
 	err := command.Execute(character)
 
 	characterItemsCountAfterCommand := len(character.Inventory())
-	characterHasWoodAfterCommand := character.HasType(app.ItemTypeResourceWood)
+	characterHasWoodAfterCommand := character.HasItemFlag(app.ItemFlagResourceWood)
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), 1, characterItemsCountBeforeCommand)
 	assert.Equal(suite.T(), 2, characterItemsCountAfterCommand)
@@ -55,9 +55,9 @@ func (suite *cutTreeCommandTest) getCharacter(items []*app.Item) commands.Charac
 	return character
 }
 
-func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomTypes []string) app.RoomRepository {
+func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomFlags []string) app.RoomRepository {
 	room := app.Room{}.Create(x, y)
-	room.AddTypes(roomTypes)
+	room.AddFlags(roomFlags)
 
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 }

@@ -1,18 +1,17 @@
 package app
 
 type Room struct {
-	x         int
-	y         int
-	roomTypes map[string]bool
+	x     int
+	y     int
+	flags map[string]bool
 }
 
-const RoomTypeRoad = "road"
-const RoomTypeUnfordable = "unfordable"
-const RoomTypeForest = "forest"
-const RoomTypeDeepForest = "deep_forest"
+const RoomFlagRoad = "road"
+const RoomFlagUnfordable = "unfordable"
+const RoomFlagHasTrees = "has_trees"
 
 func (room Room) Create(x int, y int) *Room {
-	return &Room{x: x, y: y, roomTypes: make(map[string]bool)}
+	return &Room{x: x, y: y, flags: make(map[string]bool)}
 }
 
 func (room *Room) X() int {
@@ -23,16 +22,16 @@ func (room *Room) Y() int {
 	return room.y
 }
 
-func (room *Room) AddType(roomType string) {
-	room.roomTypes[roomType] = true
+func (room *Room) AddFlag(flag string) {
+	room.flags[flag] = true
 }
 
-func (room *Room) AddTypes(roomTypes []string) {
-	for _, roomType := range roomTypes {
-		room.roomTypes[roomType] = true
+func (room *Room) AddFlags(flags []string) {
+	for _, flag := range flags {
+		room.flags[flag] = true
 	}
 }
 
-func (room *Room) HasType(itemType string) bool {
-	return room.roomTypes[itemType]
+func (room *Room) HasFlag(flag string) bool {
+	return room.flags[flag]
 }
