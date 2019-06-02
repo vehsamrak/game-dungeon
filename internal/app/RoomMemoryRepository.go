@@ -7,6 +7,7 @@ type RoomMemoryRepository struct {
 func (repository RoomMemoryRepository) Create() RoomRepository {
 	return &RoomMemoryRepository{
 		rooms: []*Room{
+			{x: -1, y: 0},
 			{x: 1, y: 1},
 		},
 	}
