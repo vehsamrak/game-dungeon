@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
@@ -22,19 +23,36 @@ func (suite *moveCommandTest) Test_Create_noParameters_commandCreated() {
 	assert.NotNil(suite.T(), command)
 }
 
-func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacterAndGameMap_characterMoved() {
+func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacter_characterMoved() {
 	command := commands.MoveCommand{}.Create()
-	character := suite.getCharacter()
-	expectedX := character.X() - 1
-	expectedY := character.Y()
 
-	command.Execute(character, "north")
+	for id, dataset := range suite.provideCharacterDirections() {
+		character := suite.getCharacter()
 
-	assert.NotNil(suite.T(), command)
-	assert.Equal(suite.T(), expectedX, character.X())
-	assert.Equal(suite.T(), expectedY, character.Y())
+		command.Execute(character, dataset.direction)
+
+		assert.Equal(suite.T(), dataset.expectedX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.Equal(suite.T(), dataset.expectedY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+	}
 }
 
 func (suite *moveCommandTest) getCharacter() commands.Character {
 	return &app.Character{}
+}
+
+func (suite *moveCommandTest) provideCharacterDirections() []struct {
+	direction string
+	expectedX int
+	expectedY int
+} {
+	return []struct {
+		direction string
+		expectedX int
+		expectedY int
+	}{
+		{"north", -1, 0},
+		{"south", 1, 0},
+		{"east", 0, 1},
+		{"west", 0, -1},
+	}
 }
