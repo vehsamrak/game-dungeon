@@ -18,7 +18,7 @@ type gameMapTest struct {
 
 func (suite *gameMapTest) Test_CreateSize_heightAndWidth_MapCreatedWithExpectedSize() {
 	for id, dataset := range suite.getCreateMapSize() {
-		gameMap := app.GameMap{}.Create(dataset.expectedHeight, dataset.expectedWidth)
+		gameMap := app.GameMap{}.Create(dataset.expectedHeight, dataset.expectedWidth, suite.getRoomRepository())
 
 		height, width := gameMap.Size()
 
@@ -28,14 +28,13 @@ func (suite *gameMapTest) Test_CreateSize_heightAndWidth_MapCreatedWithExpectedS
 	}
 }
 
-func (suite *gameMapTest) Test_RoomId_gameMapWithRooms_roomReturned() {
-	for id, dataset := range suite.getRooms() {
-		gameMap := app.GameMap{}.Create(dataset.x, dataset.y)
+func (suite *gameMapTest) Test_Room_givenRoomRepositoryWithRoomsAndXYArguments_roomReturned() {
+	x, y := 1, 1
+	gameMap := app.GameMap{}.Create(x, y, suite.getRoomRepository())
 
-		roomId := gameMap.RoomId(dataset.x, dataset.y)
+	room := gameMap.Room(x, y)
 
-		assert.Equal(suite.T(), dataset.roomId, roomId, fmt.Sprintf("Dataset %v %#v", id, dataset))
-	}
+	assert.Nil(suite.T(), room)
 }
 
 func (suite *gameMapTest) getCreateMapSize() []struct {
@@ -53,21 +52,17 @@ func (suite *gameMapTest) getCreateMapSize() []struct {
 	}
 }
 
-func (suite *gameMapTest) getRooms() []struct {
-	x      int
-	y      int
-	roomId string
-} {
-	return []struct {
-		x      int
-		y      int
-		roomId string
-	}{
-		{1, 1, "1.1"},
-		{1, 2, "1.2"},
-		{2, 2, "2.2"},
-		{12, 23, "12.23"},
-		{1, 23, "1.23"},
-		{12, 3, "12.3"},
-	}
+func (suite *gameMapTest) getRoomRepository() app.RoomRepository {
+	return &RoomRepositoryMock{}
+}
+
+type RoomRepositoryMock struct {
+}
+
+func (RoomRepositoryMock) Create() app.RoomRepository {
+	return nil
+}
+
+func (RoomRepositoryMock) FindByXY(x int, y int) *app.Room {
+	return nil
 }
