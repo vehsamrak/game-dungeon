@@ -40,7 +40,10 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	expectedY      int
 } {
 	getRoomRepositoryWithSingleRoom := func(x int, y int, roomType string) app.RoomRepository {
-		return app.RoomMemoryRepository{}.Create([]*app.Room{app.Room{}.Create(x, y, roomType)})
+		room := app.Room{}.Create(x, y)
+		room.AddType(roomType)
+
+		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 	}
 
 	return []struct {
@@ -57,6 +60,6 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		{"south", getRoomRepositoryWithSingleRoom(1, 0, app.RoomTypeRoad), 1, 0},
 		{"east", getRoomRepositoryWithSingleRoom(0, 1, app.RoomTypeRoad), 0, 1},
 		{"west", getRoomRepositoryWithSingleRoom(0, -1, app.RoomTypeRoad), 0, -1},
-		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeMountain), 0, 0},
+		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeUnfordable), 0, 0},
 	}
 }

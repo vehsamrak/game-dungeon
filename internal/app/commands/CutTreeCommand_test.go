@@ -32,7 +32,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	axe.AddType(app.ItemTypeCutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
-	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), app.RoomTypeForest)
+	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomTypeForest})
 	command := commands.CutTreeCommand{}.Create(roomRepository)
 	characterItemsCountBeforeCommand := len(character.Inventory())
 	characterHasWoodBeforeCommand := character.HasType(app.ItemTypeResourceWood)
@@ -55,6 +55,9 @@ func (suite *cutTreeCommandTest) getCharacter(items []*app.Item) commands.Charac
 	return character
 }
 
-func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomType string) app.RoomRepository {
-	return app.RoomMemoryRepository{}.Create([]*app.Room{app.Room{}.Create(x, y, roomType)})
+func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomTypes []string) app.RoomRepository {
+	room := app.Room{}.Create(x, y)
+	room.AddTypes(roomTypes)
+
+	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 }

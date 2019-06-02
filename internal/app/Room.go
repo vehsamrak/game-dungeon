@@ -1,18 +1,18 @@
 package app
 
 type Room struct {
-	x        int
-	y        int
-	roomType string
+	x         int
+	y         int
+	roomTypes map[string]bool
 }
 
 const RoomTypeRoad = "road"
-const RoomTypeMountain = "mountain"
+const RoomTypeUnfordable = "unfordable"
 const RoomTypeForest = "forest"
 const RoomTypeDeepForest = "deep_forest"
 
-func (room Room) Create(x int, y int, roomType string) *Room {
-	return &Room{x: x, y: y, roomType: roomType}
+func (room Room) Create(x int, y int) *Room {
+	return &Room{x: x, y: y, roomTypes: make(map[string]bool)}
 }
 
 func (room *Room) X() int {
@@ -23,6 +23,16 @@ func (room *Room) Y() int {
 	return room.y
 }
 
-func (room *Room) Type() string {
-	return room.roomType
+func (room *Room) AddType(roomType string) {
+	room.roomTypes[roomType] = true
+}
+
+func (room *Room) AddTypes(roomTypes []string) {
+	for _, roomType := range roomTypes {
+		room.roomTypes[roomType] = true
+	}
+}
+
+func (room *Room) HasType(itemType string) bool {
+	return room.roomTypes[itemType]
 }

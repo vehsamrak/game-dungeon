@@ -33,16 +33,23 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 
 	room := command.roomRepository.FindByXY(x, y)
 
-	if room != nil && command.checkRoomMobility(room.Type()) {
+	if room != nil && command.checkRoomMobility(room) {
 		character.Move(x, y)
 	}
 
 	return
 }
 
-func (command *MoveCommand) checkRoomMobility(roomType string) bool {
-	unmovableTypes := make(map[string]bool)
-	unmovableTypes[app.RoomTypeMountain] = true
+func (command *MoveCommand) checkRoomMobility(room *app.Room) bool {
+	unmovableTypes := []string{
+		app.RoomTypeUnfordable,
+	}
 
-	return !unmovableTypes[roomType]
+	for _, allowedRoomType := range unmovableTypes {
+		if room.HasType(allowedRoomType) {
+			return false
+		}
+	}
+
+	return true
 }
