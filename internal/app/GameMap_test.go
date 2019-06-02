@@ -16,9 +16,10 @@ type gameMapTest struct {
 	suite.Suite
 }
 
-func (suite *gameMapTest) Test_Create_heightAndWidth_MapCreatedWithExpectedSize() {
+func (suite *gameMapTest) Test_CreateSize_heightAndWidth_MapCreatedWithExpectedSize() {
 	for id, dataset := range suite.getCreateMapSize() {
 		gameMap := app.GameMap{}.Create(dataset.expectedHeight, dataset.expectedWidth)
+
 		height, width := gameMap.Size()
 
 		assert.NotNil(suite.T(), gameMap)
