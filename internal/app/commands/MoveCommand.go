@@ -14,7 +14,7 @@ func (*MoveCommand) Name() string {
 	return "move"
 }
 
-func (command *MoveCommand) Execute(character Character, arguments ...interface{}) {
+func (command *MoveCommand) Execute(character Character, arguments ...interface{}) (err error) {
 	direction := arguments[0]
 
 	x := character.X()
@@ -36,6 +36,8 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 	if room != nil && command.checkRoomMobility(room.Type()) {
 		character.Move(x, y)
 	}
+
+	return
 }
 
 func (command *MoveCommand) checkRoomMobility(roomType string) bool {

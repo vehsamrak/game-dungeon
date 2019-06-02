@@ -19,8 +19,7 @@ type moveCommandTest struct {
 
 func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacterAndRoomRepository_characterMovedIfRoomExists() {
 	for id, dataset := range suite.provideCharacterDirectionsAndRooms() {
-		roomRepository := dataset.roomRepository
-		command := commands.MoveCommand{}.Create(roomRepository)
+		command := commands.MoveCommand{}.Create(dataset.roomRepository)
 		character := suite.getCharacter()
 
 		command.Execute(character, dataset.direction)

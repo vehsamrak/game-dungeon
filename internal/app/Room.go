@@ -8,6 +8,8 @@ type Room struct {
 
 const RoomTypeRoad = "road"
 const RoomTypeMountain = "mountain"
+const RoomTypeForest = "forest"
+const RoomTypeDeepForest = "deep_forest"
 
 func (room Room) Create(x int, y int, roomType string) *Room {
 	return &Room{x: x, y: y, roomType: roomType}

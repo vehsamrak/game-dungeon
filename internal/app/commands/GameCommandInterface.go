@@ -2,5 +2,5 @@ package commands
 
 type GameCommand interface {
 	Name() string
-	Execute(character Character, arguments ...interface{})
+	Execute(character Character, arguments ...interface{}) (err error)
 }

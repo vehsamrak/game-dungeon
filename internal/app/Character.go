@@ -1,9 +1,14 @@
 package app
 
 type Character struct {
-	name string
-	x    int
-	y    int
+	name      string
+	x         int
+	y         int
+	inventory []*Item
+}
+
+func (character *Character) Inventory() []*Item {
+	return character.inventory
 }
 
 func (character *Character) Name() string {
