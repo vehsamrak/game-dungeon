@@ -17,16 +17,10 @@ type moveCommandTest struct {
 	suite.Suite
 }
 
-func (suite *moveCommandTest) Test_Create_noParameters_commandCreated() {
-	command := commands.MoveCommand{}.Create()
-
-	assert.NotNil(suite.T(), command)
-}
-
-func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacter_characterMoved() {
-	command := commands.MoveCommand{}.Create()
-
-	for id, dataset := range suite.provideCharacterDirections() {
+func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacterAndRoomRepository_characterMovedIfRoomExists() {
+	for id, dataset := range suite.provideCharacterDirectionsAndRooms() {
+		roomRepository := dataset.roomRepository
+		command := commands.MoveCommand{}.Create(roomRepository)
 		character := suite.getCharacter()
 
 		command.Execute(character, dataset.direction)
@@ -40,19 +34,30 @@ func (suite *moveCommandTest) getCharacter() commands.Character {
 	return &app.Character{}
 }
 
-func (suite *moveCommandTest) provideCharacterDirections() []struct {
-	direction string
-	expectedX int
-	expectedY int
+func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
+	direction      string
+	roomRepository app.RoomRepository
+	expectedX      int
+	expectedY      int
 } {
+	getRoomRepositoryWithSingleRoom := func(x int, y int, roomType string) app.RoomRepository {
+		return app.RoomMemoryRepository{}.Create([]*app.Room{app.Room{}.Create(x, y, roomType)})
+	}
+
 	return []struct {
-		direction string
-		expectedX int
-		expectedY int
+		direction      string
+		roomRepository app.RoomRepository
+		expectedX      int
+		expectedY      int
 	}{
-		{"north", -1, 0},
-		{"south", 1, 0},
-		{"east", 0, 1},
-		{"west", 0, -1},
+		{"north", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
+		{"south", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
+		{"east", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
+		{"west", getRoomRepositoryWithSingleRoom(0, 0, app.RoomTypeRoad), 0, 0},
+		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeRoad), -1, 0},
+		{"south", getRoomRepositoryWithSingleRoom(1, 0, app.RoomTypeRoad), 1, 0},
+		{"east", getRoomRepositoryWithSingleRoom(0, 1, app.RoomTypeRoad), 0, 1},
+		{"west", getRoomRepositoryWithSingleRoom(0, -1, app.RoomTypeRoad), 0, -1},
+		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomTypeMountain), 0, 0},
 	}
 }

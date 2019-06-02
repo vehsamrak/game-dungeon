@@ -17,13 +17,13 @@ type roomRepositoryTest struct {
 }
 
 func (suite *roomRepositoryTest) Test_Create_noParameters_roomRepository() {
-	repository := app.RoomMemoryRepository{}.Create()
+	repository := app.RoomMemoryRepository{}.Create(nil)
 
 	assert.NotNil(suite.T(), repository)
 }
 
 func (suite *roomRepositoryTest) Test_FindByXY_existingXY_room() {
-	repository := app.RoomMemoryRepository{}.Create()
+	repository := app.RoomMemoryRepository{}.Create(nil)
 	x, y := 1, 1
 
 	room := repository.FindByXY(x, y)
@@ -34,7 +34,7 @@ func (suite *roomRepositoryTest) Test_FindByXY_existingXY_room() {
 }
 
 func (suite *roomRepositoryTest) Test_FindByXY_nonexistentXY_nil() {
-	repository := app.RoomMemoryRepository{}.Create()
+	repository := app.RoomMemoryRepository{}.Create(nil)
 	nonexistentX := 2 << 10
 	nonexistentY := 2 << 10
 

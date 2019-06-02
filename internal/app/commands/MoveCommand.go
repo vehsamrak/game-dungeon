@@ -1,17 +1,20 @@
 package commands
 
+import "github.com/vehsamrak/game-dungeon/internal/app"
+
 type MoveCommand struct {
+	roomRepository app.RoomRepository
 }
 
-func (command MoveCommand) Create() *MoveCommand {
-	return &MoveCommand{}
+func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveCommand {
+	return &MoveCommand{roomRepository: roomRepository}
 }
 
 func (*MoveCommand) Name() string {
 	return "move"
 }
 
-func (*MoveCommand) Execute(character Character, arguments ...interface{}) {
+func (command *MoveCommand) Execute(character Character, arguments ...interface{}) {
 	direction := arguments[0]
 
 	x := character.X()
@@ -28,5 +31,16 @@ func (*MoveCommand) Execute(character Character, arguments ...interface{}) {
 		y -= 1
 	}
 
-	character.Move(x, y)
+	room := command.roomRepository.FindByXY(x, y)
+
+	if room != nil && command.checkRoomMobility(room.Type()) {
+		character.Move(x, y)
+	}
+}
+
+func (command *MoveCommand) checkRoomMobility(roomType string) bool {
+	unmovableTypes := make(map[string]bool)
+	unmovableTypes[app.RoomTypeMountain] = true
+
+	return !unmovableTypes[roomType]
 }
