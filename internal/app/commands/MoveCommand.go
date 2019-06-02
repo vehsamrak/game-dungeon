@@ -10,10 +10,6 @@ func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveComman
 	return &MoveCommand{roomRepository: roomRepository}
 }
 
-func (*MoveCommand) Name() string {
-	return "move"
-}
-
 func (command *MoveCommand) Execute(character Character, arguments ...interface{}) (err error) {
 	direction := arguments[0]
 
