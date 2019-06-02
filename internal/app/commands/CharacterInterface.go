@@ -8,4 +8,7 @@ type Character interface {
 	Y() int
 	Move(x int, y int) error
 	Inventory() []*app.Item
+	AddItems(items []*app.Item)
+	AddItem(item *app.Item)
+	HasType(itemType string) bool
 }

@@ -7,6 +7,16 @@ type Character struct {
 	inventory []*Item
 }
 
+func (character *Character) HasType(itemType string) bool {
+	for _, item := range character.inventory {
+		if item.HasType(itemType) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (character *Character) Inventory() []*Item {
 	return character.inventory
 }
@@ -28,4 +38,12 @@ func (character *Character) Move(x int, y int) error {
 	character.y = y
 
 	return nil
+}
+
+func (character *Character) AddItems(items []*Item) {
+	character.inventory = append(character.inventory, items...)
+}
+
+func (character *Character) AddItem(item *Item) {
+	character.inventory = append(character.inventory, item)
 }

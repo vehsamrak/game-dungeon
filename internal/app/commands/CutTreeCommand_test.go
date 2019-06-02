@@ -19,7 +19,7 @@ type cutTreeCommandTest struct {
 func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError() {
 	roomRepository := &app.RoomMemoryRepository{}
 	command := commands.CutTreeCommand{}.Create(roomRepository)
-	character := suite.getCharacter()
+	character := suite.getCharacter(nil)
 
 	noToolError := command.Execute(character)
 
@@ -27,6 +27,34 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError()
 	assert.Equal(suite.T(), "no tools or room has no trees", noToolError.Error())
 }
 
-func (suite *cutTreeCommandTest) getCharacter() commands.Character {
-	return &app.Character{}
+func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {
+	axe := app.Item{}.Create()
+	axe.AddType(app.ItemTypeCutTree)
+	character := &app.Character{}
+	character.AddItem(axe)
+	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), app.RoomTypeForest)
+	command := commands.CutTreeCommand{}.Create(roomRepository)
+	characterItemsCountBeforeCommand := len(character.Inventory())
+	characterHasWoodBeforeCommand := character.HasType(app.ItemTypeResourceWood)
+
+	err := command.Execute(character)
+
+	characterItemsCountAfterCommand := len(character.Inventory())
+	characterHasWoodAfterCommand := character.HasType(app.ItemTypeResourceWood)
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), 1, characterItemsCountBeforeCommand)
+	assert.Equal(suite.T(), 2, characterItemsCountAfterCommand)
+	assert.False(suite.T(), characterHasWoodBeforeCommand)
+	assert.True(suite.T(), characterHasWoodAfterCommand)
+}
+
+func (suite *cutTreeCommandTest) getCharacter(items []*app.Item) commands.Character {
+	character := &app.Character{}
+	character.AddItems(items)
+
+	return character
+}
+
+func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomType string) app.RoomRepository {
+	return app.RoomMemoryRepository{}.Create([]*app.Room{app.Room{}.Create(x, y, roomType)})
 }
