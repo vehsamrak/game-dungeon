@@ -8,7 +8,7 @@ type Room struct {
 
 const RoomFlagRoad = "road"
 const RoomFlagUnfordable = "unfordable"
-const RoomFlagHasTrees = "has_trees"
+const RoomFlagTrees = "trees"
 
 func (room Room) Create(x int, y int) *Room {
 	return &Room{x: x, y: y, flags: make(map[string]bool)}

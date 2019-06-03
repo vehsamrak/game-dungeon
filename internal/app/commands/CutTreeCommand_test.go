@@ -32,7 +32,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	axe.AddFlag(app.ItemFlagCutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
-	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomFlagHasTrees})
+	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomFlagTrees})
 	command := commands.CutTreeCommand{}.Create(roomRepository)
 	characterItemsCountBeforeCommand := len(character.Inventory())
 	characterHasWoodBeforeCommand := character.HasItemFlag(app.ItemFlagResourceWood)

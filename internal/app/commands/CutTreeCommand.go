@@ -16,7 +16,7 @@ func (command CutTreeCommand) Create(roomRepository app.RoomRepository) *CutTree
 func (command *CutTreeCommand) Execute(character Character, arguments ...interface{}) (err error) {
 	room := command.roomRepository.FindByXY(character.X(), character.Y())
 
-	if room != nil && character.HasItemFlag(app.ItemFlagCutTree) && room.HasFlag(app.RoomFlagHasTrees) {
+	if room != nil && character.HasItemFlag(app.ItemFlagCutTree) && room.HasFlag(app.RoomFlagTrees) {
 		wood := app.Item{}.Create()
 		wood.AddFlag(app.ItemFlagResourceWood)
 
