@@ -62,3 +62,6 @@ type RoomRepositoryMock struct {
 func (RoomRepositoryMock) FindByXY(x int, y int) *app.Room {
 	return nil
 }
+
+func (RoomRepositoryMock) AddRoom(room *app.Room) {
+}

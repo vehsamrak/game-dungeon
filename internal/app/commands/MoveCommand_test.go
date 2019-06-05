@@ -50,7 +50,7 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 	}
 
-	cantMove := exception.CantMove{}
+	roomNotFound := exception.RoomNotFound{}
 	roomUnfordable := exception.RoomUnfordable{}
 
 	return []struct {
@@ -60,10 +60,10 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		expectedCharacterY int
 		error              error
 	}{
-		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
-		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
-		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
-		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, roomNotFound},
+		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, roomNotFound},
+		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, roomNotFound},
+		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, roomNotFound},
 		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1, nil},
 		{direction.South, getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1, nil},
 		{direction.East, getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0, nil},

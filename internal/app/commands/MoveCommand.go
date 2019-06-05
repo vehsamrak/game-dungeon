@@ -15,19 +15,9 @@ func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveComman
 }
 
 func (command *MoveCommand) Execute(character Character, arguments ...interface{}) (err error) {
-	x := character.X()
-	y := character.Y()
-
-	switch arguments[0] {
-	case direction.North:
-		y += 1
-	case direction.South:
-		y -= 1
-	case direction.East:
-		x += 1
-	case direction.West:
-		x -= 1
-	}
+	xDiff, yDiff := arguments[0].(direction.Direction).DiffXY()
+	x := character.X() + xDiff
+	y := character.Y() + yDiff
 
 	room := command.roomRepository.FindByXY(x, y)
 
@@ -42,7 +32,7 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 
 func (command *MoveCommand) checkRoomMobility(room *app.Room) (err error) {
 	if room == nil {
-		err = exception.CantMove{}
+		err = exception.RoomNotFound{}
 	} else if room.HasFlag(app.RoomFlagUnfordable) {
 		err = exception.RoomUnfordable{}
 	}

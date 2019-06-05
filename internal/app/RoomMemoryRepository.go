@@ -24,3 +24,9 @@ func (repository *RoomMemoryRepository) FindByXY(x int, y int) *Room {
 
 	return nil
 }
+
+func (repository *RoomMemoryRepository) AddRoom(room *Room) {
+	// TODO: lock
+	repository.rooms = append(repository.rooms, room)
+	// TODO: unlock
+}
