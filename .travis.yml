@@ -17,7 +17,7 @@ script:
 - bash <(curl -s https://raw.githubusercontent.com/vehsamrak/go-multi-package-coverage/1.1.0/test.sh)
 
 # run integration tests
-- go test -v ./test/...
+- go test -v ./test/integration/...
 
 after_success:
 # publish coverage report
