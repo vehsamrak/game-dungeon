@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
 )
 
 type MoveCommand struct {
@@ -32,6 +33,8 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 
 	if room != nil && command.checkRoomMobility(room) {
 		character.Move(x, y)
+	} else {
+		err = &exception.CantMove{}
 	}
 
 	return
