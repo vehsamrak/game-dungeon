@@ -9,11 +9,16 @@ before_install:
 # rename package name for imports
 - mv $HOME/gopath/src/github.com/Vehsamrak $HOME/gopath/src/github.com/vehsamrak
 
-# downloading dependencies
+# download dependencies
 - go get -t -v ./...
 
 script:
+# run unit tests with coverage
 - bash <(curl -s https://raw.githubusercontent.com/vehsamrak/go-multi-package-coverage/1.1.0/test.sh)
 
+# run integration tests
+- go test -v ./test/...
+
 after_success:
+# publish coverage report
 - bash <(curl -s https://codecov.io/bash)
