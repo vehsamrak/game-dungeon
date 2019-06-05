@@ -1,6 +1,9 @@
 package commands
 
-import "github.com/vehsamrak/game-dungeon/internal/app"
+import (
+	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
+)
 
 type MoveCommand struct {
 	roomRepository app.RoomRepository
@@ -11,19 +14,17 @@ func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveComman
 }
 
 func (command *MoveCommand) Execute(character Character, arguments ...interface{}) (err error) {
-	direction := arguments[0]
-
 	x := character.X()
 	y := character.Y()
 
-	switch direction {
-	case "north":
+	switch arguments[0] {
+	case direction.North:
 		x -= 1
-	case "south":
+	case direction.South:
 		x += 1
-	case "east":
+	case direction.East:
 		y += 1
-	case "west":
+	case direction.West:
 		y -= 1
 	}
 

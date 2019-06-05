@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func (suite *moveCommandTest) getCharacter() commands.Character {
 }
 
 func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
-	direction      string
+	direction      direction.Direction
 	roomRepository app.RoomRepository
 	expectedX      int
 	expectedY      int
@@ -47,19 +48,19 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	}
 
 	return []struct {
-		direction      string
+		direction      direction.Direction
 		roomRepository app.RoomRepository
 		expectedX      int
 		expectedY      int
 	}{
-		{"north", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
-		{"south", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
-		{"east", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
-		{"west", getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
-		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagRoad), -1, 0},
-		{"south", getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0},
-		{"east", getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1},
-		{"west", getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1},
-		{"north", getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagUnfordable), 0, 0},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0},
+		{direction.North, getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagRoad), -1, 0},
+		{direction.South, getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0},
+		{direction.East, getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1},
+		{direction.West, getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1},
+		{direction.North, getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagUnfordable), 0, 0},
 	}
 }
