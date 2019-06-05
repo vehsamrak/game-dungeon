@@ -20,26 +20,32 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 
 	switch arguments[0] {
 	case direction.North:
-		x -= 1
-	case direction.South:
-		x += 1
-	case direction.East:
 		y += 1
-	case direction.West:
+	case direction.South:
 		y -= 1
+	case direction.East:
+		x += 1
+	case direction.West:
+		x -= 1
 	}
 
 	room := command.roomRepository.FindByXY(x, y)
 
-	if room != nil && command.checkRoomMobility(room) {
+	err = command.checkRoomMobility(room)
+
+	if err == nil {
 		character.Move(x, y)
-	} else {
-		err = &exception.CantMove{}
 	}
 
 	return
 }
 
-func (command *MoveCommand) checkRoomMobility(room *app.Room) bool {
-	return !room.HasFlag(app.RoomFlagUnfordable)
+func (command *MoveCommand) checkRoomMobility(room *app.Room) (err error) {
+	if room == nil {
+		err = exception.CantMove{}
+	} else if room.HasFlag(app.RoomFlagUnfordable) {
+		err = exception.RoomUnfordable{}
+	}
+
+	return
 }

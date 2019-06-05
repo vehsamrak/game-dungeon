@@ -50,7 +50,8 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 	}
 
-	cantMoveError := &exception.CantMove{}
+	cantMove := exception.CantMove{}
+	roomUnfordable := exception.RoomUnfordable{}
 
 	return []struct {
 		direction          direction.Direction
@@ -59,14 +60,14 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		expectedCharacterY int
 		error              error
 	}{
-		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMoveError},
-		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMoveError},
-		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMoveError},
-		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMoveError},
-		{direction.North, getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagRoad), -1, 0, nil},
-		{direction.South, getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0, nil},
-		{direction.East, getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1, nil},
-		{direction.West, getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1, nil},
-		{direction.North, getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagUnfordable), 0, 0, cantMoveError},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
+		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
+		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
+		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, app.RoomFlagRoad), 0, 0, cantMove},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagRoad), 0, 1, nil},
+		{direction.South, getRoomRepositoryWithSingleRoom(0, -1, app.RoomFlagRoad), 0, -1, nil},
+		{direction.East, getRoomRepositoryWithSingleRoom(1, 0, app.RoomFlagRoad), 1, 0, nil},
+		{direction.West, getRoomRepositoryWithSingleRoom(-1, 0, app.RoomFlagRoad), -1, 0, nil},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, app.RoomFlagUnfordable), 0, 0, roomUnfordable},
 	}
 }
