@@ -36,3 +36,16 @@ func (suite *roomRepositoryTest) Test_FindByXY_nonexistentXY_nil() {
 
 	assert.Nil(suite.T(), room)
 }
+
+func (suite *roomRepositoryTest) Test_AddRoom_newRoomCreated_newRoomAddedToRepository() {
+	x, y := 0, 0
+	repository := app.RoomMemoryRepository{}
+	nonexistentRoom := repository.FindByXY(x, y)
+	room := app.Room{}.Create(x, y)
+
+	repository.AddRoom(room)
+
+	existingRoom := repository.FindByXY(x, y)
+	assert.Nil(suite.T(), nonexistentRoom)
+	assert.NotNil(suite.T(), existingRoom)
+}
