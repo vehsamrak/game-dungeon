@@ -4,6 +4,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
 
 type MoveCommand struct {
@@ -33,7 +34,7 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 func (command *MoveCommand) checkRoomMobility(room *app.Room) (err error) {
 	if room == nil {
 		err = exception.RoomNotFound{}
-	} else if room.HasFlag(app.RoomFlagUnfordable) {
+	} else if room.HasFlag(roomFlag.Unfordable) {
 		err = exception.RoomUnfordable{}
 	}
 

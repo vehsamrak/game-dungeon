@@ -3,6 +3,7 @@ package commands
 import (
 	"errors"
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
 
 type CutTreeCommand struct {
@@ -16,7 +17,7 @@ func (command CutTreeCommand) Create(roomRepository app.RoomRepository) *CutTree
 func (command *CutTreeCommand) Execute(character Character, arguments ...interface{}) (err error) {
 	room := command.roomRepository.FindByXY(character.X(), character.Y())
 
-	if room != nil && character.HasItemFlag(app.ItemFlagCutTree) && room.HasFlag(app.RoomFlagTrees) {
+	if room != nil && character.HasItemFlag(app.ItemFlagCutTree) && room.HasFlag(roomFlag.Trees) {
 		wood := app.Item{}.Create()
 		wood.AddFlag(app.ItemFlagResourceWood)
 

@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
 
@@ -32,7 +33,11 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	axe.AddFlag(app.ItemFlagCutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
-	roomRepository := suite.getRoomRepositoryWithSingleRoom(character.X(), character.Y(), []string{app.RoomFlagTrees})
+	roomRepository := suite.getRoomRepositoryWithSingleRoom(
+		character.X(),
+		character.Y(),
+		[]roomFlag.Flag{roomFlag.Trees},
+	)
 	command := commands.CutTreeCommand{}.Create(roomRepository)
 	characterItemsCountBeforeCommand := len(character.Inventory())
 	characterHasWoodBeforeCommand := character.HasItemFlag(app.ItemFlagResourceWood)
@@ -55,7 +60,7 @@ func (suite *cutTreeCommandTest) getCharacter(items []*app.Item) commands.Charac
 	return character
 }
 
-func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomFlags []string) app.RoomRepository {
+func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
 	room := app.Room{}.Create(x, y)
 	room.AddFlags(roomFlags)
 

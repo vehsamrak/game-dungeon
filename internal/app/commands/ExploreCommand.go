@@ -4,14 +4,17 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/random"
 )
 
 type ExploreCommand struct {
 	roomRepository app.RoomRepository
+	random         *random.Random
 }
 
-func (command ExploreCommand) Create(roomRepository app.RoomRepository) *ExploreCommand {
-	return &ExploreCommand{roomRepository: roomRepository}
+func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *random.Random) *ExploreCommand {
+	return &ExploreCommand{roomRepository: roomRepository, random: random}
 }
 
 func (command *ExploreCommand) Execute(character Character, arguments ...interface{}) (err error) {
@@ -25,6 +28,8 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 		y := character.Y() + yDiff
 
 		room := app.Room{}.Create(x, y)
+		command.generateFlags(room)
+
 		character.Move(x, y)
 
 		command.roomRepository.AddRoom(room)
@@ -33,4 +38,13 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 	}
 
 	return
+}
+
+func (command *ExploreCommand) generateFlags(room *app.Room) {
+	roomFlags := roomFlag.ActiveFlags()
+
+	randomNumber := command.random.RandomNumber(len(roomFlags))
+	flag := roomFlags[randomNumber]
+
+	room.AddFlag(flag)
 }

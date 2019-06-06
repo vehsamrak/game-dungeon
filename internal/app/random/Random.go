@@ -17,6 +17,13 @@ func (random *Random) Seed(seed int64) {
 	random.random.Seed(seed)
 }
 
-func (random *Random) RandomNumber(max int64) int64 {
-	return random.random.Int63n(max)
+func (random *Random) RandomNumber(max int) int {
+	return random.random.Intn(max)
+}
+
+func (random *Random) RandomElement(elements []interface{}) interface{} {
+	max := len(elements)
+	randomNumber := random.random.Intn(max)
+
+	return elements[randomNumber]
 }

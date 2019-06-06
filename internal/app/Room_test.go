@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
 
@@ -26,9 +27,9 @@ func (suite *roomTest) Test_Create_roomParameters_newRoomCreated() {
 
 func (suite *roomTest) Test_AddFlag_roomWithoutFlags_flagsAddedToRoom() {
 	room := suite.createRoom()
-	firstFlag := "first_flag"
-	secondFlag := "second_flag"
-	flags := []string{secondFlag}
+	firstFlag := roomFlag.Trees
+	secondFlag := roomFlag.Road
+	flags := []roomFlag.Flag{secondFlag}
 
 	room.AddFlag(firstFlag)
 	room.AddFlags(flags)
