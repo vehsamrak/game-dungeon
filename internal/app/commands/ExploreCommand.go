@@ -25,6 +25,7 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 		y := character.Y() + yDiff
 
 		room := app.Room{}.Create(x, y)
+		character.Move(x, y)
 
 		command.roomRepository.AddRoom(room)
 

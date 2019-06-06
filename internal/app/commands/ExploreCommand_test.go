@@ -17,7 +17,7 @@ type exploreCommandTest struct {
 	suite.Suite
 }
 
-func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithNewFlags() {
+func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithNewFlagsCharacterMovedToNewRoom() {
 	roomRepository := &app.RoomMemoryRepository{}
 	command := commands.ExploreCommand{}.Create(roomRepository)
 	character := suite.getCharacter()
@@ -30,6 +30,27 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 	assert.Nil(suite.T(), err)
 	assert.Nil(suite.T(), roomBeforeExploration)
 	assert.NotNil(suite.T(), roomAfterExploration)
+	assert.Equal(suite.T(), targetRoomX, character.X())
+	assert.Equal(suite.T(), targetRoomY, character.Y())
+}
+
+func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExistedRoom_moveCommandExecuted() {
+	targetRoomX, targetRoomY := 0, 1
+	room := app.Room{}.Create(targetRoomX, targetRoomY)
+	roomRepository := &app.RoomMemoryRepository{}
+	roomRepository.AddRoom(room)
+	command := commands.ExploreCommand{}.Create(roomRepository)
+	character := suite.getCharacter()
+	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+
+	err := command.Execute(character, direction.North)
+
+	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), roomBeforeExploration)
+	assert.NotNil(suite.T(), roomAfterExploration)
+	assert.Equal(suite.T(), targetRoomX, character.X())
+	assert.Equal(suite.T(), targetRoomY, character.Y())
 }
 
 func (suite *exploreCommandTest) getCharacter() commands.Character {
