@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"errors"
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
 
@@ -23,7 +23,7 @@ func (command *CutTreeCommand) Execute(character Character, arguments ...interfa
 
 		character.AddItem(wood)
 	} else {
-		err = errors.New("no tools or room has no trees")
+		err = exception.NoTool{}
 	}
 
 	return
