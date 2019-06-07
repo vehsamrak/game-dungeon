@@ -42,16 +42,15 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 		[]roomFlag.Flag{roomFlag.Trees},
 	)
 	command := commands.CutTreeCommand{}.Create(roomRepository)
-	characterItemsCountBeforeCommand := len(character.Inventory())
+	characterInventoryBeforeCommand := character.Inventory()
 	characterHasWoodBeforeCommand := character.HasItemFlag(itemFlag.ResourceWood)
 
 	err := command.Execute(character)
 
-	characterItemsCountAfterCommand := len(character.Inventory())
 	characterHasWoodAfterCommand := character.HasItemFlag(itemFlag.ResourceWood)
 	assert.Nil(suite.T(), err)
-	assert.Equal(suite.T(), 1, characterItemsCountBeforeCommand)
-	assert.Equal(suite.T(), 2, characterItemsCountAfterCommand)
+	assert.Len(suite.T(), characterInventoryBeforeCommand, 1)
+	assert.Len(suite.T(), character.Inventory(), 2)
 	assert.False(suite.T(), characterHasWoodBeforeCommand)
 	assert.True(suite.T(), characterHasWoodAfterCommand)
 }
