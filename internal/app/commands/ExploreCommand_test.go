@@ -19,22 +19,30 @@ type exploreCommandTest struct {
 	suite.Suite
 }
 
-func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithNewFlagsCharacterMovedToNewRoom() {
+func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomsCreatedWithNewFlagsCharacterMovedToNewRoom() {
 	roomRepository := &app.RoomMemoryRepository{}
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandom())
 	character := suite.getCharacter()
-	targetRoomX, targetRoomY := 0, 1
-	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+	firstExploredRoomX, firstExploredRoomY := 0, 1
+	secondExploredRoomX, secondExploredRoomY := 0, 2
+	firstRoomBeforeExploration := roomRepository.FindByXY(firstExploredRoomX, firstExploredRoomY)
+	secondRoomBeforeExploration := roomRepository.FindByXY(secondExploredRoomX, secondExploredRoomY)
 
-	err := command.Execute(character, direction.North)
+	firstRoomError := command.Execute(character, direction.North)
+	firstRoomAfterExploration := roomRepository.FindByXY(firstExploredRoomX, firstExploredRoomY)
+	secondRoomError := command.Execute(character, direction.North)
+	secondRoomAfterExploration := roomRepository.FindByXY(secondExploredRoomX, secondExploredRoomY)
 
-	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
-	assert.Nil(suite.T(), err)
-	assert.Nil(suite.T(), roomBeforeExploration)
-	assert.NotNil(suite.T(), roomAfterExploration)
-	assert.True(suite.T(), roomAfterExploration.HasFlag(roomFlag.Trees))
-	assert.Equal(suite.T(), targetRoomX, character.X())
-	assert.Equal(suite.T(), targetRoomY, character.Y())
+	assert.Nil(suite.T(), firstRoomError)
+	assert.Nil(suite.T(), secondRoomError)
+	assert.Nil(suite.T(), firstRoomBeforeExploration)
+	assert.Nil(suite.T(), secondRoomBeforeExploration)
+	assert.NotNil(suite.T(), firstRoomAfterExploration)
+	assert.NotNil(suite.T(), secondRoomAfterExploration)
+	assert.True(suite.T(), firstRoomAfterExploration.HasFlag(roomFlag.Trees))
+	assert.True(suite.T(), secondRoomAfterExploration.HasFlag(roomFlag.Road))
+	assert.Equal(suite.T(), secondExploredRoomX, character.X())
+	assert.Equal(suite.T(), secondExploredRoomY, character.Y())
 }
 
 func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExistedRoom_moveCommandExecuted() {

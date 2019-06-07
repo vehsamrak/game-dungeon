@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
@@ -45,6 +46,8 @@ func (command *ExploreCommand) generateFlags(room *app.Room) {
 
 	randomNumber := command.random.RandomNumber(len(roomFlags))
 	flag := roomFlags[randomNumber]
+
+	fmt.Printf("%#v\n", flag)
 
 	room.AddFlag(flag)
 }
