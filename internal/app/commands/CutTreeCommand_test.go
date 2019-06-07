@@ -6,6 +6,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
@@ -32,7 +33,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError()
 
 func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {
 	axe := app.Item{}.Create()
-	axe.AddFlag(app.ItemFlagCutTree)
+	axe.AddFlag(itemFlag.CutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
 	roomRepository := suite.getRoomRepositoryWithSingleRoom(
@@ -42,12 +43,12 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	)
 	command := commands.CutTreeCommand{}.Create(roomRepository)
 	characterItemsCountBeforeCommand := len(character.Inventory())
-	characterHasWoodBeforeCommand := character.HasItemFlag(app.ItemFlagResourceWood)
+	characterHasWoodBeforeCommand := character.HasItemFlag(itemFlag.ResourceWood)
 
 	err := command.Execute(character)
 
 	characterItemsCountAfterCommand := len(character.Inventory())
-	characterHasWoodAfterCommand := character.HasItemFlag(app.ItemFlagResourceWood)
+	characterHasWoodAfterCommand := character.HasItemFlag(itemFlag.ResourceWood)
 	assert.Nil(suite.T(), err)
 	assert.Equal(suite.T(), 1, characterItemsCountBeforeCommand)
 	assert.Equal(suite.T(), 2, characterItemsCountAfterCommand)

@@ -1,6 +1,9 @@
 package commands
 
-import "github.com/vehsamrak/game-dungeon/internal/app"
+import (
+	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+)
 
 type Character interface {
 	Name() string
@@ -10,5 +13,5 @@ type Character interface {
 	Inventory() []*app.Item
 	AddItems(items []*app.Item)
 	AddItem(item *app.Item)
-	HasItemFlag(itemFlag string) bool
+	HasItemFlag(itemFlag itemFlag.Flag) bool
 }

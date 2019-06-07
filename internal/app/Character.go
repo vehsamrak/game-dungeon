@@ -1,5 +1,7 @@
 package app
 
+import "github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+
 type Character struct {
 	name      string
 	x         int
@@ -51,7 +53,7 @@ func (character *Character) AddItem(item *Item) {
 }
 
 // HasItemFlag checks character inventory to have given item flag
-func (character *Character) HasItemFlag(itemFlag string) bool {
+func (character *Character) HasItemFlag(itemFlag itemFlag.Flag) bool {
 	for _, item := range character.inventory {
 		if item.HasFlag(itemFlag) {
 			return true

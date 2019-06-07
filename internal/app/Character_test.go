@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"testing"
 )
 
@@ -74,25 +75,25 @@ func (suite *characterTest) createCharacter() *app.Character {
 }
 
 func (suite *characterTest) provideFlagAndItems() []struct {
-	itemFlag         string
+	itemFlag         itemFlag.Flag
 	items            []*app.Item
 	characterHasFlag bool
 } {
 	axe := app.Item{}.Create()
-	axe.AddFlag(app.ItemFlagCutTree)
+	axe.AddFlag(itemFlag.CutTree)
 
 	tree := app.Item{}.Create()
-	tree.AddFlag(app.ItemFlagResourceWood)
+	tree.AddFlag(itemFlag.ResourceWood)
 
 	return []struct {
-		itemFlag         string
+		itemFlag         itemFlag.Flag
 		items            []*app.Item
 		characterHasFlag bool
 	}{
-		{app.ItemFlagCutTree, []*app.Item{axe}, true},
-		{app.ItemFlagCutTree, []*app.Item{tree}, false},
-		{app.ItemFlagResourceWood, []*app.Item{axe}, false},
-		{app.ItemFlagResourceWood, []*app.Item{tree}, true},
-		{app.ItemFlagResourceWood, []*app.Item{axe, tree}, true},
+		{itemFlag.CutTree, []*app.Item{axe}, true},
+		{itemFlag.CutTree, []*app.Item{tree}, false},
+		{itemFlag.ResourceWood, []*app.Item{axe}, false},
+		{itemFlag.ResourceWood, []*app.Item{tree}, true},
+		{itemFlag.ResourceWood, []*app.Item{axe, tree}, true},
 	}
 }

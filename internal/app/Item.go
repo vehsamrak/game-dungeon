@@ -1,20 +1,19 @@
 package app
 
-const ItemFlagCutTree = "cut_tree"
-const ItemFlagResourceWood = "resource_wood"
+import "github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 
 type Item struct {
-	flags map[string]bool
+	flags map[itemFlag.Flag]bool
 }
 
 func (item Item) Create() *Item {
-	return &Item{flags: make(map[string]bool)}
+	return &Item{flags: make(map[itemFlag.Flag]bool)}
 }
 
-func (item *Item) AddFlag(flag string) {
+func (item *Item) AddFlag(flag itemFlag.Flag) {
 	item.flags[flag] = true
 }
 
-func (item *Item) HasFlag(flag string) bool {
+func (item *Item) HasFlag(flag itemFlag.Flag) bool {
 	return item.flags[flag]
 }
