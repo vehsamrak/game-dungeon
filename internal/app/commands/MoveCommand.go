@@ -3,7 +3,7 @@ package commands
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
 
@@ -25,7 +25,7 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 
 	err := command.checkRoomMobility(room)
 
-	if err == nil {
+	if err == "" {
 		character.Move(x, y)
 	} else {
 		result.AddError(err)
@@ -34,11 +34,11 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 	return
 }
 
-func (command *MoveCommand) checkRoomMobility(room *app.Room) (err error) {
+func (command *MoveCommand) checkRoomMobility(room *app.Room) (err gameError.Error) {
 	if room == nil {
-		err = exception.RoomNotFound{}
+		err = gameError.RoomNotFound
 	} else if room.HasFlag(roomFlag.Unfordable) {
-		err = exception.RoomUnfordable{}
+		err = gameError.RoomUnfordable
 	}
 
 	return

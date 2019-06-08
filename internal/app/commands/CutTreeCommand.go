@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
@@ -25,7 +25,7 @@ func (command *CutTreeCommand) Execute(character Character, arguments ...interfa
 
 		character.AddItem(wood)
 	} else {
-		result.AddError(exception.NoTool{})
+		result.AddError(gameError.NoTool)
 	}
 
 	return

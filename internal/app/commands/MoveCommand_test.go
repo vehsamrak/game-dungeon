@@ -7,7 +7,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
@@ -27,7 +27,7 @@ func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndRoomRepositor
 
 		result := command.Execute(character, dataset.direction)
 
-		if dataset.error != nil {
+		if dataset.error != "" {
 			assert.True(suite.T(), result.HasError(dataset.error), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		}
 		assert.Equal(suite.T(), dataset.expectedCharacterX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
@@ -44,7 +44,7 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	roomRepository     app.RoomRepository
 	expectedCharacterX int
 	expectedCharacterY int
-	error              error
+	error              gameError.Error
 } {
 	getRoomRepositoryWithSingleRoom := func(x int, y int, roomFlag roomFlag.Flag) app.RoomRepository {
 		room := app.Room{}.Create(x, y)
@@ -53,24 +53,24 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
 	}
 
-	roomNotFound := exception.RoomNotFound{}
-	roomUnfordable := exception.RoomUnfordable{}
+	roomNotFound := gameError.RoomNotFound
+	roomUnfordable := gameError.RoomUnfordable
 
 	return []struct {
 		direction          direction.Direction
 		roomRepository     app.RoomRepository
 		expectedCharacterX int
 		expectedCharacterY int
-		error              error
+		error              gameError.Error
 	}{
 		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, roomFlag.Road), 0, 0, roomNotFound},
 		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, roomFlag.Road), 0, 0, roomNotFound},
 		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, roomFlag.Road), 0, 0, roomNotFound},
 		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, roomFlag.Road), 0, 0, roomNotFound},
-		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, roomFlag.Road), 0, 1, nil},
-		{direction.South, getRoomRepositoryWithSingleRoom(0, -1, roomFlag.Road), 0, -1, nil},
-		{direction.East, getRoomRepositoryWithSingleRoom(1, 0, roomFlag.Road), 1, 0, nil},
-		{direction.West, getRoomRepositoryWithSingleRoom(-1, 0, roomFlag.Road), -1, 0, nil},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, roomFlag.Road), 0, 1, ""},
+		{direction.South, getRoomRepositoryWithSingleRoom(0, -1, roomFlag.Road), 0, -1, ""},
+		{direction.East, getRoomRepositoryWithSingleRoom(1, 0, roomFlag.Road), 1, 0, ""},
+		{direction.West, getRoomRepositoryWithSingleRoom(-1, 0, roomFlag.Road), -1, 0, ""},
 		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, roomFlag.Unfordable), 0, 0, roomUnfordable},
 	}
 }

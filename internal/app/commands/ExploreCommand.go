@@ -3,7 +3,7 @@ package commands
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 )
@@ -22,8 +22,8 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 	moveCommand := MoveCommand{}.Create(command.roomRepository)
 	result = moveCommand.Execute(character, exploreDirection)
 
-	if result.HasError(exception.RoomNotFound{}) {
-		result.RemoveError(exception.RoomNotFound{})
+	if result.HasError(gameError.RoomNotFound) {
+		result.RemoveError(gameError.RoomNotFound)
 
 		xDiff, yDiff := exploreDirection.DiffXY()
 		x := character.X() + xDiff

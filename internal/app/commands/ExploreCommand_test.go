@@ -1,7 +1,6 @@
 package commands_test
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
@@ -29,8 +28,6 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 
 	result := command.Execute(character, direction.North)
 	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
-
-	fmt.Printf("%#v\n", result)
 
 	assert.False(suite.T(), result.HasErrors())
 	assert.Nil(suite.T(), roomBeforeExploration)

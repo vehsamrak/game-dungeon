@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
@@ -28,7 +28,7 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithoutTool_noTool() {
 
 	commandResult := command.Execute(character)
 
-	assert.True(suite.T(), commandResult.HasError(exception.NoTool{}))
+	assert.True(suite.T(), commandResult.HasError(gameError.NoTool))
 }
 
 func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasNoOreProbability_oreNotFound() {
@@ -42,7 +42,7 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasNoOre
 
 	commandResult := command.Execute(character)
 
-	assert.True(suite.T(), commandResult.HasError(exception.OreNotFound{}))
+	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
 func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOreProbabilityButNoOre_oreNotFound() {
@@ -56,7 +56,7 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOrePr
 
 	commandResult := command.Execute(character)
 
-	assert.True(suite.T(), commandResult.HasError(exception.OreNotFound{}))
+	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
 func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOreProbabilityButNoOre_oreFound() {

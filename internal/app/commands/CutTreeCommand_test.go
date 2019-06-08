@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
@@ -26,7 +26,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError()
 
 	result := command.Execute(character)
 
-	assert.True(suite.T(), result.HasError(exception.NoTool{}))
+	assert.True(suite.T(), result.HasError(gameError.NoTool))
 }
 
 func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {

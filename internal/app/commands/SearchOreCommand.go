@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/exception"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
@@ -22,7 +22,7 @@ func (command *SearchOreCommand) Execute(character Character, arguments ...inter
 	result = commandResult{}.Create()
 
 	if !character.HasItemFlag(itemFlag.SearchOre) {
-		result.AddError(exception.NoTool{})
+		result.AddError(gameError.NoTool)
 
 		return
 	}
@@ -33,7 +33,7 @@ func (command *SearchOreCommand) Execute(character Character, arguments ...inter
 	if room != nil && room.HasFlag(roomFlag.OreProbability) && oreFound {
 		result.AddNotice(notice.FoundOre)
 	} else {
-		result.AddError(exception.OreNotFound{})
+		result.AddError(gameError.OreNotFound)
 	}
 
 	return result
