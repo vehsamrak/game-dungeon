@@ -7,13 +7,22 @@ const (
 	Unfordable     Flag = "unfordable"
 	Trees          Flag = "trees"
 	OreProbability Flag = "ore_probability"
+
+	Forest   Flag = "forest"
+	Sand     Flag = "sand"
+	Plain    Flag = "plain"
+	Hill     Flag = "hill"
+	Mountain Flag = "mountain"
+	Sea      Flag = "sea"
 )
 
-func ActiveFlags() []Flag {
+func BiomFlags() []Flag {
 	return []Flag{
-		Road,
-		Unfordable,
-		Trees,
-		OreProbability,
+		Forest,
+		Sand,
+		Plain,
+		Hill,
+		Mountain,
+		Sea,
 	}
 }

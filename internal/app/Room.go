@@ -33,3 +33,7 @@ func (room *Room) AddFlags(flags []roomFlag.Flag) {
 func (room *Room) HasFlag(flag roomFlag.Flag) bool {
 	return room.flags[flag]
 }
+
+func (room *Room) Flags() map[roomFlag.Flag]bool {
+	return room.flags
+}
