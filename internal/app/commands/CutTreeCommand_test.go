@@ -22,13 +22,11 @@ type cutTreeCommandTest struct {
 func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError() {
 	roomRepository := &app.RoomMemoryRepository{}
 	command := commands.CutTreeCommand{}.Create(roomRepository)
-	character := suite.getCharacter(nil)
+	character := suite.createCharacter(nil)
 
-	noToolError := command.Execute(character)
+	result := command.Execute(character)
 
-	assert.NotNil(suite.T(), noToolError)
-	assert.Equal(suite.T(), exception.NoTool{}, noToolError)
-	assert.NotEmpty(suite.T(), noToolError.Error())
+	assert.True(suite.T(), result.HasError(exception.NoTool{}))
 }
 
 func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {
@@ -36,7 +34,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	axe.AddFlag(itemFlag.CutTree)
 	character := &app.Character{}
 	character.AddItem(axe)
-	roomRepository := suite.getRoomRepositoryWithSingleRoom(
+	roomRepository := suite.createRoomRepositoryWithRoom(
 		character.X(),
 		character.Y(),
 		[]roomFlag.Flag{roomFlag.Trees},
@@ -45,24 +43,23 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	characterInventoryBeforeCommand := character.Inventory()
 	characterHasWoodBeforeCommand := character.HasItemFlag(itemFlag.ResourceWood)
 
-	err := command.Execute(character)
+	command.Execute(character)
 
 	characterHasWoodAfterCommand := character.HasItemFlag(itemFlag.ResourceWood)
-	assert.Nil(suite.T(), err)
 	assert.Len(suite.T(), characterInventoryBeforeCommand, 1)
 	assert.Len(suite.T(), character.Inventory(), 2)
 	assert.False(suite.T(), characterHasWoodBeforeCommand)
 	assert.True(suite.T(), characterHasWoodAfterCommand)
 }
 
-func (suite *cutTreeCommandTest) getCharacter(items []*app.Item) commands.Character {
+func (suite *cutTreeCommandTest) createCharacter(items []*app.Item) commands.Character {
 	character := &app.Character{}
 	character.AddItems(items)
 
 	return character
 }
 
-func (suite *cutTreeCommandTest) getRoomRepositoryWithSingleRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
+func (suite *cutTreeCommandTest) createRoomRepositoryWithRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
 	room := app.Room{}.Create(x, y)
 	room.AddFlags(roomFlags)
 

@@ -18,6 +18,10 @@ func (result *commandResult) AddError(err error) {
 	result.errors[err] = true
 }
 
+func (result *commandResult) RemoveError(err error) {
+	delete(result.errors, err)
+}
+
 func (result *commandResult) HasError(err error) bool {
 	_, ok := result.errors[err]
 

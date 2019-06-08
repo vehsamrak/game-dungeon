@@ -17,12 +17,14 @@ func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *
 	return &ExploreCommand{roomRepository: roomRepository, random: random}
 }
 
-func (command *ExploreCommand) Execute(character Character, arguments ...interface{}) (err error) {
+func (command *ExploreCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
 	exploreDirection := arguments[0].(direction.Direction)
 	moveCommand := MoveCommand{}.Create(command.roomRepository)
-	err = moveCommand.Execute(character, exploreDirection)
+	result = moveCommand.Execute(character, exploreDirection)
 
-	if _, ok := err.(exception.RoomNotFound); ok {
+	if result.HasError(exception.RoomNotFound{}) {
+		result.RemoveError(exception.RoomNotFound{})
+
 		xDiff, yDiff := exploreDirection.DiffXY()
 		x := character.X() + xDiff
 		y := character.Y() + yDiff
@@ -33,8 +35,6 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 		character.Move(x, y)
 
 		command.roomRepository.AddRoom(room)
-
-		err = nil
 	}
 
 	return

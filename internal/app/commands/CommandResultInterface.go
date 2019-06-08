@@ -1,6 +1,8 @@
 package commands
 
-import "github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
+import (
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
+)
 
 type CommandResult interface {
 	// todo pass exception enum
@@ -9,4 +11,5 @@ type CommandResult interface {
 	HasErrors() bool
 	AddNotice(notice notice.Notice)
 	HasNotice(notice notice.Notice) bool
+	RemoveError(err error)
 }

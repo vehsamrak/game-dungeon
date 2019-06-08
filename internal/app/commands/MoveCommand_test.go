@@ -20,14 +20,16 @@ type moveCommandTest struct {
 	suite.Suite
 }
 
-func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndGivenCharacterAndRoomRepository_characterMovedIfRoomExists() {
+func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndRoomRepository_characterMovedIfRoomExists() {
 	for id, dataset := range suite.provideCharacterDirectionsAndRooms() {
 		command := commands.MoveCommand{}.Create(dataset.roomRepository)
 		character := suite.getCharacter()
 
-		err := command.Execute(character, dataset.direction)
+		result := command.Execute(character, dataset.direction)
 
-		assert.Equal(suite.T(), dataset.error, err, fmt.Sprintf("Dataset %v %#v", id, dataset))
+		if dataset.error != nil {
+			assert.True(suite.T(), result.HasError(dataset.error), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		}
 		assert.Equal(suite.T(), dataset.expectedCharacterX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), dataset.expectedCharacterY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 	}

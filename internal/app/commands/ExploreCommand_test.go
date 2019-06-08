@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
@@ -22,14 +23,16 @@ type exploreCommandTest struct {
 func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithNewBiomFlagAndCharacterMovedToNewRoom() {
 	roomRepository := &app.RoomMemoryRepository{}
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
-	character := suite.getCharacter()
+	character := suite.createCharacter()
 	targetRoomX, targetRoomY := 0, 1
 	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
 
-	roomError := command.Execute(character, direction.North)
+	result := command.Execute(character, direction.North)
 	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
 
-	assert.Nil(suite.T(), roomError)
+	fmt.Printf("%#v\n", result)
+
+	assert.False(suite.T(), result.HasErrors())
 	assert.Nil(suite.T(), roomBeforeExploration)
 	assert.NotNil(suite.T(), roomAfterExploration)
 	suite.assertTypeIsBiom(roomAfterExploration)
@@ -43,20 +46,20 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	roomRepository := &app.RoomMemoryRepository{}
 	roomRepository.AddRoom(room)
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
-	character := suite.getCharacter()
+	character := suite.createCharacter()
 	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
 
-	err := command.Execute(character, direction.North)
+	result := command.Execute(character, direction.North)
 
 	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
-	assert.Nil(suite.T(), err)
+	assert.False(suite.T(), result.HasErrors())
 	assert.NotNil(suite.T(), roomBeforeExploration)
 	assert.NotNil(suite.T(), roomAfterExploration)
 	assert.Equal(suite.T(), targetRoomX, character.X())
 	assert.Equal(suite.T(), targetRoomY, character.Y())
 }
 
-func (suite *exploreCommandTest) getCharacter() commands.Character {
+func (suite *exploreCommandTest) createCharacter() commands.Character {
 	return &app.Character{}
 }
 
