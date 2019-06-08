@@ -3,9 +3,10 @@ package roomFlag
 type Flag string
 
 const (
-	Road       Flag = "road"
-	Unfordable Flag = "unfordable"
-	Trees      Flag = "trees"
+	Road           Flag = "road"
+	Unfordable     Flag = "unfordable"
+	Trees          Flag = "trees"
+	OreProbability Flag = "ore_probability"
 )
 
 func ActiveFlags() []Flag {
@@ -13,5 +14,6 @@ func ActiveFlags() []Flag {
 		Road,
 		Unfordable,
 		Trees,
+		OreProbability,
 	}
 }

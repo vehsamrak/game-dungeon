@@ -21,7 +21,7 @@ type exploreCommandTest struct {
 
 func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomsCreatedWithNewFlagsCharacterMovedToNewRoom() {
 	roomRepository := &app.RoomMemoryRepository{}
-	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandom())
+	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	character := suite.getCharacter()
 	firstExploredRoomX, firstExploredRoomY := 0, 1
 	secondExploredRoomX, secondExploredRoomY := 0, 2
@@ -39,8 +39,8 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomsCr
 	assert.Nil(suite.T(), secondRoomBeforeExploration)
 	assert.NotNil(suite.T(), firstRoomAfterExploration)
 	assert.NotNil(suite.T(), secondRoomAfterExploration)
-	assert.True(suite.T(), firstRoomAfterExploration.HasFlag(roomFlag.Trees))
-	assert.True(suite.T(), secondRoomAfterExploration.HasFlag(roomFlag.Road))
+	assert.True(suite.T(), firstRoomAfterExploration.HasFlag(roomFlag.Unfordable))
+	assert.True(suite.T(), secondRoomAfterExploration.HasFlag(roomFlag.OreProbability))
 	assert.Equal(suite.T(), secondExploredRoomX, character.X())
 	assert.Equal(suite.T(), secondExploredRoomY, character.Y())
 }
@@ -50,7 +50,7 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	room := app.Room{}.Create(targetRoomX, targetRoomY)
 	roomRepository := &app.RoomMemoryRepository{}
 	roomRepository.AddRoom(room)
-	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandom())
+	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	character := suite.getCharacter()
 	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
 
@@ -68,9 +68,9 @@ func (suite *exploreCommandTest) getCharacter() commands.Character {
 	return &app.Character{}
 }
 
-func (suite *exploreCommandTest) createRandom() *random.Random {
+func (suite *exploreCommandTest) createRandomWithSeed(seed int64) *random.Random {
 	randomizer := random.Random{}.Create()
-	randomizer.Seed(1)
+	randomizer.Seed(seed)
 
 	return randomizer
 }

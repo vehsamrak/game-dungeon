@@ -18,12 +18,15 @@ func (random *Random) Seed(seed int64) {
 }
 
 func (random *Random) RandomNumber(max int) int {
-	return random.random.Intn(max)
+	randomNumber := random.random.Intn(max + 1)
+
+	if randomNumber > max {
+		return random.RandomNumber(max)
+	}
+
+	return randomNumber
 }
 
-func (random *Random) RandomElement(elements []interface{}) interface{} {
-	max := len(elements)
-	randomNumber := random.random.Intn(max)
-
-	return elements[randomNumber]
+func (random *Random) RandomBoolean() bool {
+	return random.RandomNumber(1) == 1
 }

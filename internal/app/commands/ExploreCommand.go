@@ -43,7 +43,8 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 func (command *ExploreCommand) generateFlags(room *app.Room) {
 	roomFlags := roomFlag.ActiveFlags()
 
-	randomNumber := command.random.RandomNumber(len(roomFlags))
+	randomNumber := command.random.RandomNumber(len(roomFlags) - 1)
+
 	flag := roomFlags[randomNumber]
 
 	room.AddFlag(flag)
