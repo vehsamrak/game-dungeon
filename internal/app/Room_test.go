@@ -38,6 +38,15 @@ func (suite *roomTest) Test_AddFlag_roomWithoutFlags_flagsAddedToRoom() {
 	assert.True(suite.T(), room.HasFlag(secondFlag))
 }
 
+func (suite *roomTest) Test_Flags_roomWithFlag_flagReturned() {
+	room := suite.createRoom()
+	room.AddFlag(roomFlag.Unfordable)
+
+	flags := room.Flags()
+
+	assert.Len(suite.T(), flags, 1)
+}
+
 func (suite *roomTest) createRoom() *app.Room {
 	return app.Room{}.Create(0, 0)
 }
