@@ -22,7 +22,6 @@ func (command *CutTreeCommand) Execute(character Character, arguments ...interfa
 	if room != nil && character.HasItemFlag(itemFlag.CutTree) && room.HasFlag(roomFlag.Trees) {
 		wood := app.Item{}.Create()
 		wood.AddFlag(itemFlag.ResourceWood)
-
 		character.AddItem(wood)
 	} else {
 		result.AddError(gameError.NoTool)
