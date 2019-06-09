@@ -8,6 +8,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
@@ -47,7 +48,7 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	error              gameError.Error
 } {
 	getRoomRepositoryWithSingleRoom := func(x int, y int, roomFlag roomFlag.Flag) app.RoomRepository {
-		room := app.Room{}.Create(x, y)
+		room := app.Room{}.Create(x, y, roomBiom.Forest)
 		room.AddFlag(roomFlag)
 
 		return app.RoomMemoryRepository{}.Create([]*app.Room{room})

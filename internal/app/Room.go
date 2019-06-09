@@ -1,15 +1,19 @@
 package app
 
-import "github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
+import (
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
+)
 
 type Room struct {
 	x     int
 	y     int
+	biom  roomBiom.Biom
 	flags map[roomFlag.Flag]bool
 }
 
-func (room Room) Create(x int, y int) *Room {
-	return &Room{x: x, y: y, flags: make(map[roomFlag.Flag]bool)}
+func (room Room) Create(x int, y int, biom roomBiom.Biom) *Room {
+	return &Room{x: x, y: y, biom: biom, flags: make(map[roomFlag.Flag]bool)}
 }
 
 func (room *Room) X() int {
@@ -32,6 +36,10 @@ func (room *Room) AddFlags(flags []roomFlag.Flag) {
 
 func (room *Room) HasFlag(flag roomFlag.Flag) bool {
 	return room.flags[flag]
+}
+
+func (room *Room) Biom() roomBiom.Biom {
+	return room.biom
 }
 
 func (room *Room) Flags() map[roomFlag.Flag]bool {

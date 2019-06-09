@@ -4,7 +4,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 )
 
@@ -29,8 +29,9 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 		x := character.X() + xDiff
 		y := character.Y() + yDiff
 
-		room := app.Room{}.Create(x, y)
-		command.generateFlags(room)
+		biom := command.generateRandomBiom()
+		room := app.Room{}.Create(x, y, biom)
+		room.AddFlags(room.Biom().Flags())
 
 		character.Move(x, y)
 
@@ -40,11 +41,9 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 	return
 }
 
-func (command *ExploreCommand) generateFlags(room *app.Room) {
-	biomFlags := roomFlag.BiomFlags()
-	randomNumber := command.random.RandomNumber(len(biomFlags) - 1)
+func (command *ExploreCommand) generateRandomBiom() roomBiom.Biom {
+	bioms := roomBiom.All()
+	randomNumber := command.random.RandomNumber(len(bioms) - 1)
 
-	flag := biomFlags[randomNumber]
-
-	room.AddFlag(flag)
+	return bioms[randomNumber]
 }

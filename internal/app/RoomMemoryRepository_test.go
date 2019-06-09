@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -41,7 +42,7 @@ func (suite *roomRepositoryTest) Test_AddRoom_newRoomCreated_newRoomAddedToRepos
 	x, y := 0, 0
 	repository := app.RoomMemoryRepository{}
 	nonexistentRoom := repository.FindByXY(x, y)
-	room := app.Room{}.Create(x, y)
+	room := app.Room{}.Create(x, y, roomBiom.Forest)
 
 	repository.AddRoom(room)
 

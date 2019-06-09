@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
@@ -19,7 +20,7 @@ type roomTest struct {
 func (suite *roomTest) Test_Create_roomParameters_newRoomCreated() {
 	x, y := 1, 1
 
-	room := app.Room{}.Create(x, y)
+	room := app.Room{}.Create(x, y, roomBiom.Forest)
 
 	assert.Equal(suite.T(), x, room.X())
 	assert.Equal(suite.T(), y, room.Y())
@@ -48,5 +49,5 @@ func (suite *roomTest) Test_Flags_roomWithFlag_flagReturned() {
 }
 
 func (suite *roomTest) createRoom() *app.Room {
-	return app.Room{}.Create(0, 0)
+	return app.Room{}.Create(0, 0, roomBiom.Forest)
 }

@@ -7,22 +7,8 @@ const (
 	Unfordable     Flag = "unfordable"
 	Trees          Flag = "trees"
 	OreProbability Flag = "ore_probability"
-
-	Forest   Flag = "forest"
-	Sand     Flag = "sand"
-	Plain    Flag = "plain"
-	Hill     Flag = "hill"
-	Mountain Flag = "mountain"
-	Sea      Flag = "sea"
 )
 
-func BiomFlags() []Flag {
-	return []Flag{
-		Forest,
-		Sand,
-		Plain,
-		Hill,
-		Mountain,
-		Sea,
-	}
+func (flag Flag) String() string {
+	return string(flag)
 }

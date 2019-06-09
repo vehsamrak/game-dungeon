@@ -7,6 +7,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"testing"
 )
@@ -60,7 +61,7 @@ func (suite *cutTreeCommandTest) createCharacter(items []*app.Item) commands.Cha
 }
 
 func (suite *cutTreeCommandTest) createRoomRepositoryWithRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
-	room := app.Room{}.Create(x, y)
+	room := app.Room{}.Create(x, y, roomBiom.Forest)
 	room.AddFlags(roomFlags)
 
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})

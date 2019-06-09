@@ -8,6 +8,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 	"testing"
@@ -59,7 +60,7 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOrePr
 	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
-func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOreProbabilityButNoOre_oreFound() {
+func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOreProbabilityAndOre_oreFound() {
 	character := suite.createCharacterWithTool()
 	characterBeforeCommand := *character
 	roomRepository := suite.createRoomRepositoryWithRoom(
@@ -73,12 +74,13 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOrePr
 
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.Equal(suite.T(), character.Inventory(), characterBeforeCommand.Inventory())
+	// TODO[petr]: not gather but receive notice
 	assert.False(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
 	assert.True(suite.T(), commandResult.HasNotice(notice.FoundOre))
 }
 
 func (suite *searchOreCommandTest) createRoomRepositoryWithRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
-	room := app.Room{}.Create(x, y)
+	room := app.Room{}.Create(x, y, roomBiom.Mountain)
 	room.AddFlags(roomFlags)
 
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
