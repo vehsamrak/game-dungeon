@@ -11,6 +11,7 @@ const (
 	Hill     Biom = "hill"
 	Mountain Biom = "mountain"
 	Sea      Biom = "sea"
+	Cliff    Biom = "cliff"
 )
 
 func All() []Biom {
@@ -21,13 +22,17 @@ func All() []Biom {
 		Hill,
 		Mountain,
 		Sea,
+		Cliff,
 	}
 }
 
 func (biom Biom) Flags() []roomFlag.Flag {
 	flagMap := map[Biom][]roomFlag.Flag{
 		Forest:   {roomFlag.Trees},
-		Mountain: {roomFlag.OreProbability},
+		Mountain: {roomFlag.OreProbability, roomFlag.GemProbability},
+		Sea:      {roomFlag.FishProbability},
+		Sand:     {roomFlag.GemProbability},
+		Cliff:    {roomFlag.Unfordable},
 	}
 
 	return flagMap[biom]
