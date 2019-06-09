@@ -86,7 +86,7 @@ func (suite *exploreCommandTest) provideRoomBiomAndFlags() []struct {
 	}{
 		{1, roomBiom.Cliff, []roomFlag.Flag{roomFlag.Unfordable}},
 		{2, roomBiom.Mountain, []roomFlag.Flag{roomFlag.OreProbability, roomFlag.GemProbability}},
-		{3, roomBiom.Hill, []roomFlag.Flag{}},
+		{3, roomBiom.Hill, []roomFlag.Flag{roomFlag.CaveProbability}},
 		{5, roomBiom.Plain, []roomFlag.Flag{}},
 		{9, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
 		{11, roomBiom.Sea, []roomFlag.Flag{roomFlag.FishProbability}},

@@ -9,6 +9,7 @@ const (
 	OreProbability  Flag = "ore_probability"
 	FishProbability Flag = "fish_probability"
 	GemProbability  Flag = "gem_probability"
+	CaveProbability Flag = "cave_probability"
 )
 
 func (flag Flag) String() string {
