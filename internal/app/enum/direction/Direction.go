@@ -7,6 +7,8 @@ const (
 	South Direction = "south"
 	East  Direction = "east"
 	West  Direction = "west"
+	Up    Direction = "up"
+	Down  Direction = "down"
 )
 
 func (direction Direction) DiffXY() (x int, y int) {
@@ -19,6 +21,13 @@ func (direction Direction) DiffXY() (x int, y int) {
 		x += 1
 	case West:
 		x -= 1
+		// TODO[petr]: up, down, Z coordinates
+	case Up:
+		x += 100
+		y += 100
+	case Down:
+		x -= 100
+		y -= 100
 	}
 
 	return

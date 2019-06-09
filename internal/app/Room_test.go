@@ -56,6 +56,16 @@ func (suite *roomTest) Test_Flags_roomWithFlag_flagReturned() {
 	assert.Len(suite.T(), flags, 1)
 }
 
+func (suite *roomTest) Test_RemoveFlag_roomWithFlag_flagRemovedFromRoom() {
+	room := suite.createRoom()
+	flag := roomFlag.Trees
+	room.AddFlag(flag)
+
+	room.RemoveFlag(roomFlag.Trees)
+
+	assert.False(suite.T(), room.HasFlag(flag))
+}
+
 func (suite *roomTest) Test_Biom_roomWithBiom_biomReturned() {
 	forestBiom := roomBiom.Forest
 	room := app.Room{}.Create(0, 0, forestBiom)

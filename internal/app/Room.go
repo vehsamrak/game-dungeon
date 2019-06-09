@@ -45,3 +45,7 @@ func (room *Room) Biom() roomBiom.Biom {
 func (room *Room) Flags() map[roomFlag.Flag]bool {
 	return room.flags
 }
+
+func (room *Room) RemoveFlag(flag roomFlag.Flag) {
+	delete(room.flags, flag)
+}

@@ -9,6 +9,7 @@ const (
 	WrongBiom      Error = "biom is not applicable"
 	RoomNotFound   Error = "room not found"
 	RoomUnfordable Error = "room unfordable"
+	CaveNotFound   Error = "cave not found"
 )
 
 func (error Error) Error() string {

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
@@ -35,6 +36,12 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 		return
 	}
 
+	if room.Biom() == roomBiom.Mountain {
+		command.mineMountain(room, character, result)
+
+		return
+	}
+
 	oreFound := command.random.RandomBoolean()
 	if room != nil && room.HasFlag(roomFlag.OreProbability) && oreFound {
 		ore := app.Item{}.Create()
@@ -45,4 +52,22 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 	}
 
 	return result
+}
+
+func (command *MineCommand) mineMountain(room *app.Room, character Character, result CommandResult) {
+	if room.HasFlag(roomFlag.CaveProbability) {
+		room.RemoveFlag(roomFlag.CaveProbability)
+
+		xDiff, yDiff := direction.Down.DiffXY()
+		x := character.X() + xDiff
+		y := character.Y() + yDiff
+
+		room := app.Room{}.Create(x, y, roomBiom.Cave)
+		room.AddFlags(room.Biom().Flags())
+		command.roomRepository.AddRoom(room)
+
+		character.Move(x, y)
+	} else {
+		result.AddError(gameError.CaveNotFound)
+	}
 }
