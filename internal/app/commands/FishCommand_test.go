@@ -84,19 +84,18 @@ func (suite *fishCommandTest) createRoomRepositoryWithWaterRoom(
 	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Water)
 	room.AddFlags(roomFlags)
 
-	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), roomBiom.Water, room)
+	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), room)
 }
 
 func (suite *fishCommandTest) createRoomRepositoryWithForestRoom(character *app.Character) app.RoomRepository {
 	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Forest)
 
-	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), roomBiom.Water, room)
+	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), room)
 }
 
 func (suite *fishCommandTest) createRoomRepositoryWithRoom(
 	x int,
 	y int,
-	biom roomBiom.Biom,
 	room *app.Room,
 ) app.RoomRepository {
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
