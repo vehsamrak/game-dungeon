@@ -26,13 +26,21 @@ func (suite *roomTest) Test_Create_roomParameters_newRoomCreated() {
 	assert.Equal(suite.T(), y, room.Y())
 }
 
-func (suite *roomTest) Test_AddFlag_roomWithoutFlags_flagsAddedToRoom() {
+func (suite *roomTest) Test_AddFlag_roomWithoutFlags_flagAddedToRoom() {
+	room := suite.createRoom()
+	flag := roomFlag.Trees
+
+	room.AddFlag(flag)
+
+	assert.True(suite.T(), room.HasFlag(flag))
+}
+
+func (suite *roomTest) Test_AddFlags_roomWithoutFlags_flagsAddedToRoom() {
 	room := suite.createRoom()
 	firstFlag := roomFlag.Trees
 	secondFlag := roomFlag.Road
-	flags := []roomFlag.Flag{secondFlag}
+	flags := []roomFlag.Flag{firstFlag, secondFlag}
 
-	room.AddFlag(firstFlag)
 	room.AddFlags(flags)
 
 	assert.True(suite.T(), room.HasFlag(firstFlag))
@@ -49,11 +57,12 @@ func (suite *roomTest) Test_Flags_roomWithFlag_flagReturned() {
 }
 
 func (suite *roomTest) Test_Biom_roomWithBiom_biomReturned() {
-	room := suite.createRoom()
+	forestBiom := roomBiom.Forest
+	room := app.Room{}.Create(0, 0, forestBiom)
 
 	biom := room.Biom()
 
-	assert.Equal(suite.T(), roomBiom.Forest, biom)
+	assert.Equal(suite.T(), forestBiom, biom)
 }
 
 func (suite *roomTest) createRoom() *app.Room {
