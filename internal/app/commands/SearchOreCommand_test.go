@@ -74,7 +74,6 @@ func (suite *searchOreCommandTest) Test_Execute_characterWithToolAndRoomHasOrePr
 
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.Equal(suite.T(), character.Inventory(), characterBeforeCommand.Inventory())
-	// TODO[petr]: not gather but receive notice
 	assert.False(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
 	assert.True(suite.T(), commandResult.HasNotice(notice.FoundOre))
 }
