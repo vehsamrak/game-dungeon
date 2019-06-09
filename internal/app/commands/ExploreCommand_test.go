@@ -22,6 +22,7 @@ type exploreCommandTest struct {
 }
 
 func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithBiomAndFlagsAndCharacterMovedToNewRoom() {
+	allBiomsAreCorrect := true
 	for id, dataset := range suite.provideRoomBiomAndFlags() {
 		roomRepository := &app.RoomMemoryRepository{}
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
@@ -36,10 +37,32 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Nil(suite.T(), roomBeforeExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
-		assert.Equal(suite.T(), dataset.biom, roomAfterExploration.Biom(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		biomIsCorrect := assert.Equal(suite.T(), dataset.biom, roomAfterExploration.Biom(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		if !biomIsCorrect {
+			allBiomsAreCorrect = false
+		}
 		suite.assertRoomHasFlags(dataset.roomFlags, roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), targetRoomX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), targetRoomY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+	}
+
+	if !allBiomsAreCorrect {
+		suite.showBiomNumbers(int64(len(roomBiom.All()) * 10))
+	}
+}
+
+func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
+	var i int64
+	for i = 0; i < iterationsCount; i++ {
+		character := suite.createCharacter()
+		roomRepository := &app.RoomMemoryRepository{}
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
+		commandDirection := direction.North
+		command.Execute(character, commandDirection)
+		targetRoomX, targetRoomY := commandDirection.DiffXY()
+		roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+
+		fmt.Printf("%v %v\n", i, roomAfterExploration.Biom())
 	}
 }
 
@@ -84,13 +107,17 @@ func (suite *exploreCommandTest) provideRoomBiomAndFlags() []struct {
 		biom       roomBiom.Biom
 		roomFlags  []roomFlag.Flag
 	}{
-		{1, roomBiom.Cliff, []roomFlag.Flag{roomFlag.Unfordable}},
-		{2, roomBiom.Mountain, []roomFlag.Flag{roomFlag.OreProbability, roomFlag.GemProbability}},
-		{3, roomBiom.Hill, []roomFlag.Flag{roomFlag.CaveProbability}},
-		{5, roomBiom.Plain, []roomFlag.Flag{}},
-		{9, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
-		{11, roomBiom.Sea, []roomFlag.Flag{roomFlag.FishProbability}},
-		{12, roomBiom.Sand, []roomFlag.Flag{roomFlag.GemProbability}},
+		{18, roomBiom.Swamp, []roomFlag.Flag{}},
+		{0, roomBiom.Hill, []roomFlag.Flag{roomFlag.CaveProbability}},
+		{13, roomBiom.Water, []roomFlag.Flag{roomFlag.FishProbability}},
+		{14, roomBiom.Cave, []roomFlag.Flag{}},
+		{7, roomBiom.Plain, []roomFlag.Flag{}},
+		{3, roomBiom.Cliff, []roomFlag.Flag{roomFlag.Unfordable}},
+		{1, roomBiom.Sand, []roomFlag.Flag{roomFlag.GemProbability}},
+		{2, roomBiom.Town, []roomFlag.Flag{}},
+		{5, roomBiom.Air, []roomFlag.Flag{}},
+		{11, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
+		{26, roomBiom.Mountain, []roomFlag.Flag{roomFlag.OreProbability, roomFlag.GemProbability}},
 	}
 }
 
