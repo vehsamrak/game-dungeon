@@ -48,6 +48,14 @@ func (suite *roomTest) Test_Flags_roomWithFlag_flagReturned() {
 	assert.Len(suite.T(), flags, 1)
 }
 
+func (suite *roomTest) Test_Biom_roomWithBiom_biomReturned() {
+	room := suite.createRoom()
+
+	biom := room.Biom()
+
+	assert.Equal(suite.T(), roomBiom.Forest, biom)
+}
+
 func (suite *roomTest) createRoom() *app.Room {
 	return app.Room{}.Create(0, 0, roomBiom.Forest)
 }
