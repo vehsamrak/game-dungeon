@@ -8,7 +8,6 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/notice"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
@@ -162,7 +161,6 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
 	assert.False(suite.T(), characterBeforeCommand.HasItemFlag(itemFlag.ResourceOre))
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
-	assert.False(suite.T(), commandResult.HasNotice(notice.FoundOre))
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithMountainRoom(
