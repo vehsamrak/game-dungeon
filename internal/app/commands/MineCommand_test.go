@@ -42,8 +42,82 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsNotMoun
 	commandResult := command.Execute(character)
 
 	assert.Equal(suite.T(), roomBiom.Forest, room.Biom())
-	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
 	assert.True(suite.T(), commandResult.HasError(gameError.WrongBiom))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound() {
+	character := suite.createCharacterWithTool()
+	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(character, []roomFlag.Flag{roomFlag.OreProbability})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+
+	commandResult := command.Execute(character)
+
+	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndNoCaveProbability_caveNotFound() {
+	character := suite.createCharacterWithTool()
+	roomRepository, _ := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+
+	commandResult := command.Execute(character)
+
+	assert.True(suite.T(), commandResult.HasError(gameError.CaveNotFound))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveWithOreProbabilityAndWithCaveProbabilityOpenedDownAndCharacterMovedDown() {
+	character := suite.createCharacterWithTool()
+	characterBeforeCommand := *character
+	roomRepository, initialRoom := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{roomFlag.CaveProbability})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(3))
+	targetX, targetY := direction.Down.DiffXY()
+
+	commandResult := command.Execute(character)
+
+	newRoom := roomRepository.FindByXY(targetX, targetY)
+	assert.False(suite.T(), commandResult.HasErrors())
+	assert.Equal(suite.T(), roomBiom.Cave, newRoom.Biom())
+	assert.True(suite.T(), newRoom.HasFlag(roomFlag.OreProbability))
+	assert.True(suite.T(), newRoom.HasFlag(roomFlag.CaveProbability))
+	assert.NotEqual(suite.T(), characterBeforeCommand.X()+characterBeforeCommand.Y(), character.X()+character.Y())
+	assert.Equal(suite.T(), targetX, character.X())
+	assert.Equal(suite.T(), targetY, character.Y())
+	assert.False(suite.T(), initialRoom.HasFlag(roomFlag.CaveProbability))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveWithOreProbabilityAndWithoutCaveProbabilityOpenedDownAndCharacterMovedDown() {
+	character := suite.createCharacterWithTool()
+	characterBeforeCommand := *character
+	roomRepository, initialRoom := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{roomFlag.CaveProbability})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+	targetX, targetY := direction.Down.DiffXY()
+
+	commandResult := command.Execute(character)
+
+	newRoom := roomRepository.FindByXY(targetX, targetY)
+	assert.False(suite.T(), commandResult.HasErrors())
+	assert.False(suite.T(), initialRoom.HasFlag(roomFlag.CaveProbability))
+	assert.Equal(suite.T(), roomBiom.Cave, newRoom.Biom())
+	assert.True(suite.T(), newRoom.HasFlag(roomFlag.OreProbability))
+	assert.False(suite.T(), newRoom.HasFlag(roomFlag.CaveProbability))
+	assert.NotEqual(suite.T(), characterBeforeCommand.X()+characterBeforeCommand.Y(), character.X()+character.Y())
+	assert.Equal(suite.T(), targetX, character.X())
+	assert.Equal(suite.T(), targetY, character.Y())
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveNotFoundAndCharacterNotMoved() {
+	character := suite.createCharacterWithTool()
+	characterBeforeCommand := *character
+	roomRepository, room := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{roomFlag.CaveProbability})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
+	targetX, targetY := direction.Down.DiffXY()
+
+	commandResult := command.Execute(character)
+
+	assert.False(suite.T(), room.HasFlag(roomFlag.CaveProbability))
+	assert.True(suite.T(), commandResult.HasError(gameError.CaveNotFound))
+	assert.Equal(suite.T(), characterBeforeCommand.X()+characterBeforeCommand.Y(), character.X()+character.Y())
+	assert.Nil(suite.T(), roomRepository.FindByXY(targetX, targetY))
 }
 
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasNoOreProbability_oreNotFound() {
@@ -54,59 +128,24 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	commandResult := command.Execute(character)
 
 	assert.Equal(suite.T(), roomBiom.Cave, room.Biom())
-	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
 	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound() {
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbability_orePlacedToCharacterInventoryAndNewCaveOpened() {
 	character := suite.createCharacterWithTool()
-	roomRepository, room := suite.createRoomRepositoryWithCaveRoom(character, []roomFlag.Flag{roomFlag.OreProbability})
-	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(
+		character,
+		[]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability},
+	)
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 
 	commandResult := command.Execute(character)
 
-	assert.Equal(suite.T(), roomBiom.Cave, room.Biom())
-	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
-	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
-}
-
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndNoCaveProbability_caveNotFound() {
-	character := suite.createCharacterWithTool()
-	roomRepository, room := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{})
-	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
-
-	commandResult := command.Execute(character)
-
-	assert.Equal(suite.T(), roomBiom.Mountain, room.Biom())
-	assert.True(suite.T(), commandResult.HasError(gameError.CaveNotFound))
-	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
-}
-
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveWithOreProbabilityAndWithCaveProbabilityOpenedDownAndCharacterMovedDown() {
-	character := suite.createCharacterWithTool()
-	characterBeforeCommand := *character
-	roomRepository, initialRoom := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{roomFlag.CaveProbability})
-	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
-	targetX, targetY := direction.Down.DiffXY()
-
-	commandResult := command.Execute(character)
-
-	newCave := roomRepository.FindByXY(targetX, targetY)
 	assert.False(suite.T(), commandResult.HasErrors())
-	assert.True(suite.T(), character.HasItemFlag(itemFlag.MineTool))
-	assert.Equal(suite.T(), roomBiom.Mountain, initialRoom.Biom())
-	assert.Equal(suite.T(), roomBiom.Cave, newCave.Biom())
-	assert.True(suite.T(), newCave.HasFlag(roomFlag.OreProbability))
-	assert.True(suite.T(), newCave.HasFlag(roomFlag.CaveProbability))
-	assert.NotEqual(suite.T(), characterBeforeCommand.X()+characterBeforeCommand.Y(), character.X()+character.Y())
-	assert.Equal(suite.T(), targetX, character.X())
-	assert.Equal(suite.T(), targetY, character.Y())
-	assert.False(suite.T(), initialRoom.HasFlag(roomFlag.CaveProbability))
+	suite.assertNearCaveOpened(roomRepository)
+	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
 }
 
-// TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveWithOreProbabilityAndWithoutCaveProbabilityOpenedDownAndCharacterMovedDown
-// TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsMountainAndCaveProbability_caveProbabilityRemovedAndCaveNotFound
-// TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbability_oreFoundAndNewCaveOpened
 // TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndNoCaveProbability_orePlacedToCharacterInventory
 // TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound
 
@@ -133,7 +172,7 @@ func (suite *mineCommandTest) createRoomRepositoryWithMountainRoom(
 	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Mountain)
 	room.AddFlags(roomFlags)
 
-	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), roomBiom.Water, room), room
+	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), room), room
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithCaveRoom(
@@ -143,19 +182,18 @@ func (suite *mineCommandTest) createRoomRepositoryWithCaveRoom(
 	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Cave)
 	room.AddFlags(roomFlags)
 
-	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), roomBiom.Water, room), room
+	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), room), room
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithForestRoom(character *app.Character) (app.RoomRepository, *app.Room) {
 	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Forest)
 
-	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), roomBiom.Water, room), room
+	return suite.createRoomRepositoryWithRoom(character.X(), character.Y(), room), room
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithRoom(
 	x int,
 	y int,
-	biom roomBiom.Biom,
 	room *app.Room,
 ) app.RoomRepository {
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
@@ -181,4 +219,19 @@ func (suite *mineCommandTest) createRandomWithSeed(seed int64) *random.Random {
 	randomizer.Seed(seed)
 
 	return randomizer
+}
+
+func (suite *mineCommandTest) assertNearCaveOpened(roomRepository app.RoomRepository) {
+	directions := []direction.Direction{direction.North, direction.South, direction.East, direction.West}
+
+	var nearCaveOpened bool
+	for _, searchDirection := range directions {
+		x, y := searchDirection.DiffXY()
+		newCave := roomRepository.FindByXY(x, y)
+		if newCave != nil && newCave.Biom() == roomBiom.Cave {
+			nearCaveOpened = true
+		}
+	}
+
+	assert.True(suite.T(), nearCaveOpened)
 }

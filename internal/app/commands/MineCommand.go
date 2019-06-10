@@ -47,6 +47,19 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 		ore := app.Item{}.Create()
 		ore.AddFlag(itemFlag.ResourceOre)
 		character.AddItem(ore)
+
+		newCaveFound := command.random.RandomBoolean()
+		if room.HasFlag(roomFlag.CaveProbability) && newCaveFound {
+			newCaveDirectionKey := command.random.RandomNumber(3)
+			newCaveDirections := []direction.Direction{
+				direction.North,
+				direction.South,
+				direction.East,
+				direction.West,
+			}
+
+			command.createCave(character, newCaveDirections[newCaveDirectionKey])
+		}
 	} else {
 		result.AddError(gameError.OreNotFound)
 	}
@@ -58,16 +71,33 @@ func (command *MineCommand) mineMountain(room *app.Room, character Character, re
 	if room.HasFlag(roomFlag.CaveProbability) {
 		room.RemoveFlag(roomFlag.CaveProbability)
 
-		xDiff, yDiff := direction.Down.DiffXY()
-		x := character.X() + xDiff
-		y := character.Y() + yDiff
+		if command.random.RandomBoolean() {
+			result.AddError(gameError.CaveNotFound)
 
-		room := app.Room{}.Create(x, y, roomBiom.Cave)
-		room.AddFlags(room.Biom().Flags())
-		command.roomRepository.AddRoom(room)
+			return
+		}
+
+		x, y := command.createCave(character, direction.Down)
 
 		character.Move(x, y)
 	} else {
 		result.AddError(gameError.CaveNotFound)
 	}
+}
+
+func (command *MineCommand) createCave(character Character, newCaveDirection direction.Direction) (x int, y int) {
+	xDiff, yDiff := newCaveDirection.DiffXY()
+	x = character.X() + xDiff
+	y = character.Y() + yDiff
+
+	newRoom := app.Room{}.Create(x, y, roomBiom.Cave)
+	newRoom.AddFlag(roomFlag.OreProbability)
+
+	if command.random.RandomBoolean() {
+		newRoom.AddFlag(roomFlag.CaveProbability)
+	}
+
+	command.roomRepository.AddRoom(newRoom)
+
+	return x, y
 }
