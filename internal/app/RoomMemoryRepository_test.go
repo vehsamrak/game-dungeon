@@ -21,7 +21,7 @@ func (suite *roomRepositoryTest) Test_FindByXY_existingXY_room() {
 	repository := app.RoomMemoryRepository{}.Create(nil)
 	x, y := 1, 1
 
-	room := repository.FindByXY(x, y)
+	room := repository.FindByXandY(x, y)
 
 	assert.NotNil(suite.T(), room)
 	assert.Equal(suite.T(), x, room.X())
@@ -33,7 +33,7 @@ func (suite *roomRepositoryTest) Test_FindByXY_nonexistentXY_nil() {
 	nonexistentX := 0
 	nonexistentY := 0
 
-	room := repository.FindByXY(nonexistentX, nonexistentY)
+	room := repository.FindByXandY(nonexistentX, nonexistentY)
 
 	assert.Nil(suite.T(), room)
 }
@@ -41,12 +41,12 @@ func (suite *roomRepositoryTest) Test_FindByXY_nonexistentXY_nil() {
 func (suite *roomRepositoryTest) Test_AddRoom_newRoomCreated_newRoomAddedToRepository() {
 	x, y := 0, 0
 	repository := app.RoomMemoryRepository{}
-	nonexistentRoom := repository.FindByXY(x, y)
+	nonexistentRoom := repository.FindByXandY(x, y)
 	room := app.Room{}.Create(x, y, roomBiom.Forest)
 
 	repository.AddRoom(room)
 
-	existingRoom := repository.FindByXY(x, y)
+	existingRoom := repository.FindByXandY(x, y)
 	assert.Nil(suite.T(), nonexistentRoom)
 	assert.NotNil(suite.T(), existingRoom)
 }

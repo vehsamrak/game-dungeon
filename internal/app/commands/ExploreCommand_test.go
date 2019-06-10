@@ -7,6 +7,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
@@ -29,11 +30,11 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		character := suite.createCharacter()
 		commandDirection := direction.North
 		targetRoomX, targetRoomY := commandDirection.DiffXY()
-		roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+		roomBeforeExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
 
 		result := command.Execute(character, commandDirection)
 
-		roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+		roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
 		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Nil(suite.T(), roomBeforeExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
@@ -51,21 +52,6 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 	}
 }
 
-func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
-	var i int64
-	for i = 0; i < iterationsCount; i++ {
-		character := suite.createCharacter()
-		roomRepository := &app.RoomMemoryRepository{}
-		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
-		commandDirection := direction.North
-		command.Execute(character, commandDirection)
-		targetRoomX, targetRoomY := commandDirection.DiffXY()
-		roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
-
-		fmt.Printf("%v %v\n", i, roomAfterExploration.Biom())
-	}
-}
-
 func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExistedRoom_moveCommandExecuted() {
 	commandDirection := direction.North
 	targetRoomX, targetRoomY := commandDirection.DiffXY()
@@ -74,16 +60,32 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	roomRepository.AddRoom(room)
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	character := suite.createCharacter()
-	roomBeforeExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+	roomBeforeExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
 
 	result := command.Execute(character, commandDirection)
 
-	roomAfterExploration := roomRepository.FindByXY(targetRoomX, targetRoomY)
+	roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
 	assert.False(suite.T(), result.HasErrors())
 	assert.NotNil(suite.T(), roomBeforeExploration)
 	assert.NotNil(suite.T(), roomAfterExploration)
 	assert.Equal(suite.T(), targetRoomX, character.X())
 	assert.Equal(suite.T(), targetRoomY, character.Y())
+}
+
+func (suite *exploreCommandTest) Test_Execute_characterInCaveBiomAndNoNearRooms_wrongBiom() {
+	character := suite.createCharacter()
+	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Cave)
+	roomRepository := &app.RoomMemoryRepository{}
+	roomRepository.AddRoom(room)
+	commandDirection := direction.North
+	targetRoomX, targetRoomY := commandDirection.DiffXY()
+	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+
+	result := command.Execute(character, commandDirection)
+
+	assert.True(suite.T(), result.HasError(gameError.WrongBiom))
+	assert.Nil(suite.T(), roomRepository.FindByXandY(targetRoomX, targetRoomY))
+	assert.NotEqual(suite.T(), targetRoomX+targetRoomY, character.X()+character.Y())
 }
 
 func (suite *exploreCommandTest) createCharacter() commands.Character {
@@ -118,6 +120,21 @@ func (suite *exploreCommandTest) provideRoomBiomAndFlags() []struct {
 		{5, roomBiom.Air, []roomFlag.Flag{}},
 		{11, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
 		{26, roomBiom.Mountain, []roomFlag.Flag{roomFlag.OreProbability, roomFlag.GemProbability}},
+	}
+}
+
+func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
+	var i int64
+	for i = 0; i < iterationsCount; i++ {
+		character := suite.createCharacter()
+		roomRepository := &app.RoomMemoryRepository{}
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
+		commandDirection := direction.North
+		command.Execute(character, commandDirection)
+		targetRoomX, targetRoomY := commandDirection.DiffXY()
+		roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+
+		fmt.Printf("%v %v\n", i, roomAfterExploration.Biom())
 	}
 }
 

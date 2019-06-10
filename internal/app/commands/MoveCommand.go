@@ -21,7 +21,7 @@ func (command *MoveCommand) Execute(character Character, arguments ...interface{
 	x := character.X() + xDiff
 	y := character.Y() + yDiff
 
-	room := command.roomRepository.FindByXY(x, y)
+	room := command.roomRepository.FindByXandY(x, y)
 
 	err := command.checkRoomMobility(room)
 

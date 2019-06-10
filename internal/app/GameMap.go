@@ -27,5 +27,5 @@ func (gameMap *GameMap) Size() (height int, width int) {
 }
 
 func (gameMap *GameMap) Room(x int, y int) *Room {
-	return gameMap.roomRepository.FindByXY(x, y)
+	return gameMap.roomRepository.FindByXandY(x, y)
 }

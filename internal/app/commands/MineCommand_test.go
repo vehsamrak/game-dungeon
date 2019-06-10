@@ -63,7 +63,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountai
 
 	commandResult := command.Execute(character)
 
-	newRoom := roomRepository.FindByXY(targetX, targetY)
+	newRoom := roomRepository.FindByXandY(targetX, targetY)
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.Equal(suite.T(), roomBiom.Cave, newRoom.Biom())
 	assert.True(suite.T(), newRoom.HasFlag(roomFlag.OreProbability))
@@ -83,7 +83,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountai
 
 	commandResult := command.Execute(character)
 
-	newRoom := roomRepository.FindByXY(targetX, targetY)
+	newRoom := roomRepository.FindByXandY(targetX, targetY)
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.False(suite.T(), initialRoom.HasFlag(roomFlag.CaveProbability))
 	assert.Equal(suite.T(), roomBiom.Cave, newRoom.Biom())
@@ -106,7 +106,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountai
 	assert.False(suite.T(), room.HasFlag(roomFlag.CaveProbability))
 	assert.True(suite.T(), commandResult.HasError(gameError.CaveNotFound))
 	assert.Equal(suite.T(), characterBeforeCommand.X()+characterBeforeCommand.Y(), character.X()+character.Y())
-	assert.Nil(suite.T(), roomRepository.FindByXY(targetX, targetY))
+	assert.Nil(suite.T(), roomRepository.FindByXandY(targetX, targetY))
 }
 
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasNoOreProbability_oreNotFound() {
@@ -236,7 +236,7 @@ func (suite *mineCommandTest) isNearCaveOpened(roomRepository app.RoomRepository
 
 	for _, searchDirection := range directions {
 		x, y := searchDirection.DiffXY()
-		newCave := roomRepository.FindByXY(x, y)
+		newCave := roomRepository.FindByXandY(x, y)
 		if newCave != nil && newCave.Biom() == roomBiom.Cave {
 			return true
 		}

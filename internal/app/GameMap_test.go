@@ -59,9 +59,13 @@ func (suite *gameMapTest) getRoomRepository() app.RoomRepository {
 type RoomRepositoryMock struct {
 }
 
-func (RoomRepositoryMock) FindByXY(x int, y int) *app.Room {
+func (RoomRepositoryMock) FindByXandY(x int, y int) *app.Room {
 	return nil
 }
 
 func (RoomRepositoryMock) AddRoom(room *app.Room) {
+}
+
+func (RoomRepositoryMock) FindByXY(XY app.XYInterface) *app.Room {
+	return nil
 }

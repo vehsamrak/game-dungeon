@@ -15,7 +15,7 @@ func (repository RoomMemoryRepository) Create(rooms []*Room) RoomRepository {
 	return &RoomMemoryRepository{rooms: rooms}
 }
 
-func (repository *RoomMemoryRepository) FindByXY(x int, y int) *Room {
+func (repository *RoomMemoryRepository) FindByXandY(x int, y int) *Room {
 	for _, room := range repository.rooms {
 		if room.x == x && room.y == y {
 			return room
@@ -23,6 +23,10 @@ func (repository *RoomMemoryRepository) FindByXY(x int, y int) *Room {
 	}
 
 	return nil
+}
+
+func (repository *RoomMemoryRepository) FindByXY(XY XYInterface) *Room {
+	return repository.FindByXandY(XY.X(), XY.Y())
 }
 
 func (repository *RoomMemoryRepository) AddRoom(room *Room) {

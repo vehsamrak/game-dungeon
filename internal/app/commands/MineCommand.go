@@ -28,7 +28,7 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 		return
 	}
 
-	room := command.roomRepository.FindByXY(character.X(), character.Y())
+	room := command.roomRepository.FindByXandY(character.X(), character.Y())
 
 	if room.Biom() != roomBiom.Mountain && room.Biom() != roomBiom.Cave {
 		result.AddError(gameError.WrongBiom)
