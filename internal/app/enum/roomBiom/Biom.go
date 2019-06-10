@@ -37,12 +37,12 @@ func All() []Biom {
 func (biom Biom) Flags() []roomFlag.Flag {
 	flagMap := map[Biom][]roomFlag.Flag{
 		Forest:   {roomFlag.Trees},
-		Mountain: {roomFlag.OreProbability, roomFlag.GemProbability},
+		Mountain: {roomFlag.CaveProbability},
 		Water:    {roomFlag.FishProbability},
 		Sand:     {roomFlag.GemProbability},
 		Cliff:    {roomFlag.Unfordable},
 		Hill:     {roomFlag.CaveProbability},
-		Cave:     {roomFlag.OreProbability, roomFlag.CaveProbability},
+		Cave:     {roomFlag.OreProbability, roomFlag.CaveProbability, roomFlag.GemProbability},
 	}
 
 	return flagMap[biom]
