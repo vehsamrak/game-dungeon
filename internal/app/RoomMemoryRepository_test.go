@@ -17,7 +17,7 @@ type roomRepositoryTest struct {
 	suite.Suite
 }
 
-func (suite *roomRepositoryTest) Test_FindByXY_existingXY_room() {
+func (suite *roomRepositoryTest) Test_FindByXandY_existingXY_room() {
 	repository := app.RoomMemoryRepository{}.Create(nil)
 	x, y := 1, 1
 
@@ -28,12 +28,35 @@ func (suite *roomRepositoryTest) Test_FindByXY_existingXY_room() {
 	assert.Equal(suite.T(), y, room.Y())
 }
 
-func (suite *roomRepositoryTest) Test_FindByXY_nonexistentXY_nil() {
+func (suite *roomRepositoryTest) Test_FindByXandY_nonexistentXY_nil() {
 	repository := app.RoomMemoryRepository{}
 	nonexistentX := 0
 	nonexistentY := 0
 
 	room := repository.FindByXandY(nonexistentX, nonexistentY)
+
+	assert.Nil(suite.T(), room)
+}
+
+func (suite *roomRepositoryTest) Test_FindByXY_characterWithExistingXY_room() {
+	x, y := 1, 1
+	repository := app.RoomMemoryRepository{}
+	repository.AddRoom(app.Room{}.Create(x, y, roomBiom.Forest))
+	character := &app.Character{}
+	character.Move(x, y)
+
+	room := repository.FindByXY(character)
+
+	assert.NotNil(suite.T(), room)
+	assert.Equal(suite.T(), character.X(), room.X())
+	assert.Equal(suite.T(), character.Y(), room.Y())
+}
+
+func (suite *roomRepositoryTest) Test_FindByXY_characterWithNonexistentXY_room() {
+	repository := app.RoomMemoryRepository{}
+	character := &app.Character{}
+
+	room := repository.FindByXY(character)
 
 	assert.Nil(suite.T(), room)
 }
