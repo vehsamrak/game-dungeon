@@ -44,16 +44,6 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsNotMoun
 	assert.True(suite.T(), commandResult.HasError(gameError.WrongBiom))
 }
 
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound() {
-	character := suite.createCharacterWithTool()
-	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(character, []roomFlag.Flag{roomFlag.OreProbability})
-	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
-
-	commandResult := command.Execute(character)
-
-	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
-}
-
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsMountainAndNoCaveProbability_caveNotFound() {
 	character := suite.createCharacterWithTool()
 	roomRepository, _ := suite.createRoomRepositoryWithMountainRoom(character, []roomFlag.Flag{})
@@ -130,6 +120,16 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound() {
+	character := suite.createCharacterWithTool()
+	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(character, []roomFlag.Flag{roomFlag.OreProbability})
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+
+	commandResult := command.Execute(character)
+
+	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
+}
+
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbability_orePlacedToCharacterInventoryAndNewCaveOpened() {
 	character := suite.createCharacterWithTool()
 	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(
@@ -141,12 +141,24 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	commandResult := command.Execute(character)
 
 	assert.False(suite.T(), commandResult.HasErrors())
-	suite.assertNearCaveOpened(roomRepository)
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
+	assert.True(suite.T(), suite.isNearCaveOpened(roomRepository))
 }
 
-// TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndNoCaveProbability_orePlacedToCharacterInventory
-// TODO[petr]: Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndNoOre_oreNotFound
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndNoCaveProbability_orePlacedToCharacterInventory() {
+	character := suite.createCharacterWithTool()
+	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(
+		character,
+		[]roomFlag.Flag{roomFlag.OreProbability},
+	)
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
+
+	commandResult := command.Execute(character)
+
+	assert.False(suite.T(), commandResult.HasErrors())
+	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
+	assert.False(suite.T(), suite.isNearCaveOpened(roomRepository))
+}
 
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOre_orePlacedToCharacterInventory() {
 	character := suite.createCharacterWithTool()
@@ -219,17 +231,16 @@ func (suite *mineCommandTest) createRandomWithSeed(seed int64) *random.Random {
 	return randomizer
 }
 
-func (suite *mineCommandTest) assertNearCaveOpened(roomRepository app.RoomRepository) {
+func (suite *mineCommandTest) isNearCaveOpened(roomRepository app.RoomRepository) (nearCaveOpened bool) {
 	directions := []direction.Direction{direction.North, direction.South, direction.East, direction.West}
 
-	var nearCaveOpened bool
 	for _, searchDirection := range directions {
 		x, y := searchDirection.DiffXY()
 		newCave := roomRepository.FindByXY(x, y)
 		if newCave != nil && newCave.Biom() == roomBiom.Cave {
-			nearCaveOpened = true
+			return true
 		}
 	}
 
-	assert.True(suite.T(), nearCaveOpened)
+	return
 }
