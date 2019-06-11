@@ -9,7 +9,8 @@ type Character interface {
 	Name() string
 	X() int
 	Y() int
-	Move(x int, y int) error
+	Z() int
+	Move(x int, y int, z int)
 	Inventory() []*app.Item
 	AddItems(items []*app.Item)
 	AddItem(item *app.Item)

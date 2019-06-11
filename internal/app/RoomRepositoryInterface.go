@@ -1,7 +1,7 @@
 package app
 
 type RoomRepository interface {
-	FindByXandY(x int, y int) *Room
 	AddRoom(room *Room)
-	FindByXY(XY XYInterface) *Room
+	FindByXYandZ(x int, y int, z int) *Room
+	FindByXYZ(XYZ XYInterface) *Room
 }

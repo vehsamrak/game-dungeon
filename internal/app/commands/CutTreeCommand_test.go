@@ -38,6 +38,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_t
 	roomRepository := suite.createRoomRepositoryWithRoom(
 		character.X(),
 		character.Y(),
+		character.Z(),
 		[]roomFlag.Flag{roomFlag.Trees},
 	)
 	command := commands.CutTreeCommand{}.Create(roomRepository)
@@ -60,8 +61,13 @@ func (suite *cutTreeCommandTest) createCharacter(items []*app.Item) commands.Cha
 	return character
 }
 
-func (suite *cutTreeCommandTest) createRoomRepositoryWithRoom(x int, y int, roomFlags []roomFlag.Flag) app.RoomRepository {
-	room := app.Room{}.Create(x, y, roomBiom.Forest)
+func (suite *cutTreeCommandTest) createRoomRepositoryWithRoom(
+	x int,
+	y int,
+	z int,
+	roomFlags []roomFlag.Flag,
+) app.RoomRepository {
+	room := app.Room{}.Create(x, y, z, roomBiom.Forest)
 	room.AddFlags(roomFlags)
 
 	return app.RoomMemoryRepository{}.Create([]*app.Room{room})

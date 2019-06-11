@@ -6,6 +6,7 @@ type Character struct {
 	name      string
 	x         int
 	y         int
+	z         int
 	inventory []*Item
 }
 
@@ -29,12 +30,16 @@ func (character *Character) Y() int {
 	return character.y
 }
 
+// Z coordinate of character (up and down)
+func (character *Character) Z() int {
+	return character.z
+}
+
 // Move character to given X and Y coordinates
-func (character *Character) Move(x int, y int) error {
+func (character *Character) Move(x int, y int, z int) {
 	character.x = x
 	character.y = y
-
-	return nil
+	character.z = z
 }
 
 // Inventory of character

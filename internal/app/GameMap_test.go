@@ -29,10 +29,10 @@ func (suite *gameMapTest) Test_CreateSize_heightAndWidth_MapCreatedWithExpectedS
 }
 
 func (suite *gameMapTest) Test_Room_givenRoomRepositoryWithRoomsAndXYArguments_roomReturned() {
-	x, y := 1, 1
+	x, y, z := 1, 1, 0
 	gameMap := app.GameMap{}.Create(x, y, suite.getRoomRepository())
 
-	room := gameMap.Room(x, y)
+	room := gameMap.Room(x, y, z)
 
 	assert.Nil(suite.T(), room)
 }
@@ -59,13 +59,13 @@ func (suite *gameMapTest) getRoomRepository() app.RoomRepository {
 type RoomRepositoryMock struct {
 }
 
-func (RoomRepositoryMock) FindByXandY(x int, y int) *app.Room {
+func (RoomRepositoryMock) FindByXYandZ(x int, y int, z int) *app.Room {
 	return nil
 }
 
 func (RoomRepositoryMock) AddRoom(room *app.Room) {
 }
 
-func (RoomRepositoryMock) FindByXY(XY app.XYInterface) *app.Room {
+func (RoomRepositoryMock) FindByXYZ(XYZ app.XYInterface) *app.Room {
 	return nil
 }

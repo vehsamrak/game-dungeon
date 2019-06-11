@@ -28,19 +28,22 @@ func (suite *characterTest) Test_Create_characterParameters_newCharacterCreated(
 	assert.Equal(suite.T(), suite.name, character.Name())
 	assert.Equal(suite.T(), 0, character.X())
 	assert.Equal(suite.T(), 0, character.Y())
+	assert.Equal(suite.T(), 0, character.Z())
 }
 
 func (suite *characterTest) Test_Move_character_characterMoved() {
 	character := suite.createCharacter()
-	initialX, initialY := 0, 0
-	destinationX, destinationY := 1, 1
+	initialX, initialY, initialZ := 0, 0, 0
+	destinationX, destinationY, destinationZ := 1, 1, 1
 
-	character.Move(destinationX, destinationY)
+	character.Move(destinationX, destinationY, destinationZ)
 
 	assert.NotEqual(suite.T(), initialX, character.X())
 	assert.NotEqual(suite.T(), initialY, character.Y())
+	assert.NotEqual(suite.T(), initialZ, character.Z())
 	assert.Equal(suite.T(), destinationX, character.X())
 	assert.Equal(suite.T(), destinationY, character.Y())
+	assert.Equal(suite.T(), destinationZ, character.Z())
 }
 
 func (suite *characterTest) Test_HasItemFlag_characterWithItems_validItemDetectionInCharacterInventory() {

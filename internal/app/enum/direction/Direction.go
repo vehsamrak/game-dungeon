@@ -11,7 +11,7 @@ const (
 	Down  Direction = "down"
 )
 
-func (direction Direction) DiffXY() (x int, y int) {
+func (direction Direction) DiffXYZ() (x int, y int, z int) {
 	switch direction {
 	case North:
 		y += 1
@@ -21,13 +21,10 @@ func (direction Direction) DiffXY() (x int, y int) {
 		x += 1
 	case West:
 		x -= 1
-		// TODO[petr]: up, down, Z coordinates
 	case Up:
-		x += 100
-		y += 100
+		z += 1
 	case Down:
-		x -= 100
-		y -= 100
+		z -= 1
 	}
 
 	return

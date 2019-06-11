@@ -18,12 +18,13 @@ type roomTest struct {
 }
 
 func (suite *roomTest) Test_Create_roomParameters_newRoomCreated() {
-	x, y := 1, 1
+	x, y, z := 1, 1, 1
 
-	room := app.Room{}.Create(x, y, roomBiom.Forest)
+	room := app.Room{}.Create(x, y, z, roomBiom.Forest)
 
 	assert.Equal(suite.T(), x, room.X())
 	assert.Equal(suite.T(), y, room.Y())
+	assert.Equal(suite.T(), z, room.Z())
 }
 
 func (suite *roomTest) Test_AddFlag_roomWithoutFlags_flagAddedToRoom() {
@@ -68,7 +69,7 @@ func (suite *roomTest) Test_RemoveFlag_roomWithFlag_flagRemovedFromRoom() {
 
 func (suite *roomTest) Test_Biom_roomWithBiom_biomReturned() {
 	forestBiom := roomBiom.Forest
-	room := app.Room{}.Create(0, 0, forestBiom)
+	room := app.Room{}.Create(0, 0, 0, forestBiom)
 
 	biom := room.Biom()
 
@@ -76,5 +77,5 @@ func (suite *roomTest) Test_Biom_roomWithBiom_biomReturned() {
 }
 
 func (suite *roomTest) createRoom() *app.Room {
-	return app.Room{}.Create(0, 0, roomBiom.Forest)
+	return app.Room{}.Create(0, 0, 0, roomBiom.Forest)
 }

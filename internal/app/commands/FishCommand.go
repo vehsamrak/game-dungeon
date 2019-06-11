@@ -27,7 +27,7 @@ func (command *FishCommand) Execute(character Character, arguments ...interface{
 		return
 	}
 
-	room := command.roomRepository.FindByXandY(character.X(), character.Y())
+	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 
 	if room.Biom() != roomBiom.Water {
 		result.AddError(gameError.WrongBiom)

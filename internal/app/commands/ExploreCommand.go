@@ -20,7 +20,7 @@ func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *
 func (command *ExploreCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
 	result = commandResult{}.Create()
 
-	characterRoom := command.roomRepository.FindByXY(character)
+	characterRoom := command.roomRepository.FindByXYZ(character)
 	if characterRoom != nil && characterRoom.Biom() == roomBiom.Cave {
 		result.AddError(gameError.WrongBiom)
 
@@ -34,15 +34,16 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 	if result.HasError(gameError.RoomNotFound) {
 		result.RemoveError(gameError.RoomNotFound)
 
-		xDiff, yDiff := exploreDirection.DiffXY()
+		xDiff, yDiff, zDiff := exploreDirection.DiffXYZ()
 		x := character.X() + xDiff
 		y := character.Y() + yDiff
+		z := character.Z() + zDiff
 
 		biom := command.generateRandomBiom()
-		room := app.Room{}.Create(x, y, biom)
+		room := app.Room{}.Create(x, y, z, biom)
 		room.AddFlags(room.Biom().Flags())
 
-		character.Move(x, y)
+		character.Move(x, y, z)
 
 		command.roomRepository.AddRoom(room)
 	}

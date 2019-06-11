@@ -26,6 +26,6 @@ func (gameMap *GameMap) Size() (height int, width int) {
 	return len(gameMap.fields), len(gameMap.fields[len(gameMap.fields)])
 }
 
-func (gameMap *GameMap) Room(x int, y int) *Room {
-	return gameMap.roomRepository.FindByXandY(x, y)
+func (gameMap *GameMap) Room(x int, y int, z int) *Room {
+	return gameMap.roomRepository.FindByXYandZ(x, y, z)
 }

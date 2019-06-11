@@ -28,7 +28,7 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 		return
 	}
 
-	room := command.roomRepository.FindByXandY(character.X(), character.Y())
+	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 
 	if room.Biom() != roomBiom.Mountain && room.Biom() != roomBiom.Cave {
 		result.AddError(gameError.WrongBiom)
@@ -77,20 +77,24 @@ func (command *MineCommand) mineMountain(room *app.Room, character Character, re
 			return
 		}
 
-		x, y := command.createCave(character, direction.Down)
+		x, y, z := command.createCave(character, direction.Down)
 
-		character.Move(x, y)
+		character.Move(x, y, z)
 	} else {
 		result.AddError(gameError.CaveNotFound)
 	}
 }
 
-func (command *MineCommand) createCave(character Character, newCaveDirection direction.Direction) (x int, y int) {
-	xDiff, yDiff := newCaveDirection.DiffXY()
+func (command *MineCommand) createCave(
+	character Character,
+	newCaveDirection direction.Direction,
+) (x int, y int, z int) {
+	xDiff, yDiff, zDiff := newCaveDirection.DiffXYZ()
 	x = character.X() + xDiff
 	y = character.Y() + yDiff
+	z = character.Z() + zDiff
 
-	newRoom := app.Room{}.Create(x, y, roomBiom.Cave)
+	newRoom := app.Room{}.Create(x, y, z, roomBiom.Cave)
 	newRoom.AddFlag(roomFlag.OreProbability)
 
 	if command.random.RandomBoolean() {
@@ -99,5 +103,5 @@ func (command *MineCommand) createCave(character Character, newCaveDirection dir
 
 	command.roomRepository.AddRoom(newRoom)
 
-	return x, y
+	return x, y, z
 }

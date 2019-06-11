@@ -8,12 +8,13 @@ import (
 type Room struct {
 	x     int
 	y     int
+	z     int
 	biom  roomBiom.Biom
 	flags map[roomFlag.Flag]bool
 }
 
-func (room Room) Create(x int, y int, biom roomBiom.Biom) *Room {
-	return &Room{x: x, y: y, biom: biom, flags: make(map[roomFlag.Flag]bool)}
+func (room Room) Create(x int, y int, z int, biom roomBiom.Biom) *Room {
+	return &Room{x: x, y: y, z: z, biom: biom, flags: make(map[roomFlag.Flag]bool)}
 }
 
 func (room *Room) X() int {
@@ -22,6 +23,10 @@ func (room *Room) X() int {
 
 func (room *Room) Y() int {
 	return room.y
+}
+
+func (room *Room) Z() int {
+	return room.z
 }
 
 func (room *Room) AddFlag(flag roomFlag.Flag) {

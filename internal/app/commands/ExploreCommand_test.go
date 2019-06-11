@@ -29,12 +29,12 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
 		character := suite.createCharacter()
 		commandDirection := direction.North
-		targetRoomX, targetRoomY := commandDirection.DiffXY()
-		roomBeforeExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 		result := command.Execute(character, commandDirection)
 
-		roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Nil(suite.T(), roomBeforeExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
@@ -54,17 +54,17 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 
 func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExistedRoom_moveCommandExecuted() {
 	commandDirection := direction.North
-	targetRoomX, targetRoomY := commandDirection.DiffXY()
-	room := app.Room{}.Create(targetRoomX, targetRoomY, roomBiom.Forest)
+	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+	room := app.Room{}.Create(targetRoomX, targetRoomY, targetRoomZ, roomBiom.Forest)
 	roomRepository := &app.RoomMemoryRepository{}
 	roomRepository.AddRoom(room)
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	character := suite.createCharacter()
-	roomBeforeExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+	roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 	result := command.Execute(character, commandDirection)
 
-	roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+	roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 	assert.False(suite.T(), result.HasErrors())
 	assert.NotNil(suite.T(), roomBeforeExploration)
 	assert.NotNil(suite.T(), roomAfterExploration)
@@ -74,17 +74,17 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 
 func (suite *exploreCommandTest) Test_Execute_characterInCaveBiomAndNoNearRooms_wrongBiom() {
 	character := suite.createCharacter()
-	room := app.Room{}.Create(character.X(), character.Y(), roomBiom.Cave)
+	room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
 	roomRepository := &app.RoomMemoryRepository{}
 	roomRepository.AddRoom(room)
 	commandDirection := direction.North
-	targetRoomX, targetRoomY := commandDirection.DiffXY()
+	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
 
 	result := command.Execute(character, commandDirection)
 
 	assert.True(suite.T(), result.HasError(gameError.WrongBiom))
-	assert.Nil(suite.T(), roomRepository.FindByXandY(targetRoomX, targetRoomY))
+	assert.Nil(suite.T(), roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ))
 	assert.NotEqual(suite.T(), targetRoomX+targetRoomY, character.X()+character.Y())
 }
 
@@ -131,8 +131,8 @@ func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
 		commandDirection := direction.North
 		command.Execute(character, commandDirection)
-		targetRoomX, targetRoomY := commandDirection.DiffXY()
-		roomAfterExploration := roomRepository.FindByXandY(targetRoomX, targetRoomY)
+		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 		fmt.Printf("%v %v\n", i, roomAfterExploration.Biom())
 	}
