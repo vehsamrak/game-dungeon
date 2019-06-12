@@ -17,8 +17,19 @@ func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *
 	return &ExploreCommand{roomRepository: roomRepository, random: random}
 }
 
-func (command *ExploreCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
+func (command *ExploreCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
+
+	if len(arguments) < 1 {
+		result.AddError(gameError.WrongCommandAttributes)
+		return
+	}
+
+	exploreDirection, err := direction.FromString(arguments[0])
+	if err != "" {
+		result.AddError(gameError.WrongCommandAttributes)
+		return
+	}
 
 	characterRoom := command.roomRepository.FindByXYZ(character)
 	if characterRoom != nil && characterRoom.Biom() == roomBiom.Cave {
@@ -27,9 +38,8 @@ func (command *ExploreCommand) Execute(character Character, arguments ...interfa
 		return
 	}
 
-	exploreDirection := arguments[0].(direction.Direction)
 	moveCommand := MoveCommand{}.Create(command.roomRepository)
-	result = moveCommand.Execute(character, exploreDirection)
+	result = moveCommand.Execute(character, exploreDirection.String())
 
 	if result.HasError(gameError.RoomNotFound) {
 		result.RemoveError(gameError.RoomNotFound)

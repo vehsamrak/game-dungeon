@@ -47,3 +47,7 @@ func (biom Biom) Flags() []roomFlag.Flag {
 
 	return flagMap[biom]
 }
+
+func (biom Biom) String() string {
+	return string(biom)
+}

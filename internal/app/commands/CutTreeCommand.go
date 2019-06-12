@@ -15,7 +15,7 @@ func (command CutTreeCommand) Create(roomRepository app.RoomRepository) *CutTree
 	return &CutTreeCommand{roomRepository: roomRepository}
 }
 
-func (command *CutTreeCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
+func (command *CutTreeCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
 	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 

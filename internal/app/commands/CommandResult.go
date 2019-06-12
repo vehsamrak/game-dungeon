@@ -31,3 +31,7 @@ func (result *commandResult) HasError(err gameError.Error) bool {
 func (result *commandResult) HasErrors() bool {
 	return len(result.errors) > 0
 }
+
+func (result *commandResult) Errors() map[gameError.Error]bool {
+	return result.errors
+}

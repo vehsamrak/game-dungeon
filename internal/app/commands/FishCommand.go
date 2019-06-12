@@ -18,7 +18,7 @@ func (command FishCommand) Create(roomRepository app.RoomRepository, random *ran
 	return &FishCommand{roomRepository: roomRepository, random: random}
 }
 
-func (command *FishCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
+func (command *FishCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
 
 	if !character.HasItemFlag(itemFlag.FishTool) {

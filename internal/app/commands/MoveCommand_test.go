@@ -26,7 +26,7 @@ func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndRoomRepositor
 		command := commands.MoveCommand{}.Create(dataset.roomRepository)
 		character := suite.getCharacter()
 
-		result := command.Execute(character, dataset.direction)
+		result := command.Execute(character, dataset.direction.String())
 
 		if dataset.error != "" {
 			assert.True(suite.T(), result.HasError(dataset.error), fmt.Sprintf("Dataset %v %#v", id, dataset))

@@ -19,7 +19,7 @@ func (command MineCommand) Create(roomRepository app.RoomRepository, random *ran
 	return &MineCommand{roomRepository: roomRepository, random: random}
 }
 
-func (command *MineCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
+func (command *MineCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
 
 	if !character.HasItemFlag(itemFlag.MineTool) {

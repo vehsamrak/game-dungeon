@@ -15,17 +15,28 @@ func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveComman
 	return &MoveCommand{roomRepository: roomRepository}
 }
 
-func (command *MoveCommand) Execute(character Character, arguments ...interface{}) (result CommandResult) {
+func (command *MoveCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
-	xDiff, yDiff, zDiff := arguments[0].(direction.Direction).DiffXYZ()
+
+	if len(arguments) < 1 {
+		result.AddError(gameError.WrongCommandAttributes)
+		return
+	}
+
+	moveDirection, err := direction.FromString(arguments[0])
+	if err != "" {
+		result.AddError(gameError.WrongCommandAttributes)
+		return
+	}
+
+	xDiff, yDiff, zDiff := moveDirection.DiffXYZ()
 	x := character.X() + xDiff
 	y := character.Y() + yDiff
 	z := character.Z() + zDiff
 
 	room := command.roomRepository.FindByXYandZ(x, y, z)
 
-	err := command.checkRoomMobility(room)
-
+	err = command.checkRoomMobility(room)
 	if err == "" {
 		character.Move(x, y, z)
 	} else {

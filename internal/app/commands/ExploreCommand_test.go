@@ -32,7 +32,7 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
 		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
-		result := command.Execute(character, commandDirection)
+		result := command.Execute(character, commandDirection.String())
 
 		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
@@ -62,7 +62,7 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	character := suite.createCharacter()
 	roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
-	result := command.Execute(character, commandDirection)
+	result := command.Execute(character, commandDirection.String())
 
 	roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 	assert.False(suite.T(), result.HasErrors())
@@ -81,7 +81,7 @@ func (suite *exploreCommandTest) Test_Execute_characterInCaveBiomAndNoNearRooms_
 	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
 	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
 
-	result := command.Execute(character, commandDirection)
+	result := command.Execute(character, commandDirection.String())
 
 	assert.True(suite.T(), result.HasError(gameError.WrongBiom))
 	assert.Nil(suite.T(), roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ))
@@ -130,7 +130,7 @@ func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
 		roomRepository := &app.RoomMemoryRepository{}
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
 		commandDirection := direction.North
-		command.Execute(character, commandDirection)
+		command.Execute(character, commandDirection.String())
 		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
 		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 

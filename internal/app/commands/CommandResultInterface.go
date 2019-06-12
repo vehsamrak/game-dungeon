@@ -9,4 +9,5 @@ type CommandResult interface {
 	HasError(err gameError.Error) bool
 	RemoveError(err gameError.Error)
 	HasErrors() bool
+	Errors() map[gameError.Error]bool
 }
