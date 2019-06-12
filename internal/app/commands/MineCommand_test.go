@@ -141,12 +141,60 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbability_orePlacedToCharacterInventoryAndNewCaveOpened() {
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndNoNearRooms_orePlacedToCharacterInventoryAndNewCaveOpened() {
 	character := suite.createCharacterWithTool()
 	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(
 		character,
 		[]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability},
 	)
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
+
+	commandResult := command.Execute(character)
+
+	assert.False(suite.T(), commandResult.HasErrors())
+	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
+	assert.True(suite.T(), suite.isNearCaveOpened(roomRepository))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndAllNearRoomsAlreadyExist_orePlacedToCharacterInventoryAndCaveNotOpened() {
+	character := suite.createCharacterWithTool()
+	northX, northY, northZ := direction.North.DiffXYZ()
+	southX, southY, southZ := direction.South.DiffXYZ()
+	eastX, eastY, eastZ := direction.East.DiffXYZ()
+	westX, westY, westZ := direction.West.DiffXYZ()
+	initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
+	initialRoom.AddFlags([]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability})
+	rooms := []*app.Room{
+		initialRoom,
+		app.Room{}.Create(northX, northY, northZ, roomBiom.Forest),
+		app.Room{}.Create(southX, southY, southZ, roomBiom.Forest),
+		app.Room{}.Create(eastX, eastY, eastZ, roomBiom.Forest),
+		app.Room{}.Create(westX, westY, westZ, roomBiom.Forest),
+	}
+	roomRepository := suite.createRoomRepositoryWithRooms(rooms)
+	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
+
+	commandResult := command.Execute(character)
+
+	assert.True(suite.T(), commandResult.HasError(gameError.RoomAlreadyExist))
+	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
+	assert.False(suite.T(), suite.isNearCaveOpened(roomRepository))
+}
+
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndTargetRoomAlreadyExist_orePlacedToCharacterInventoryAndNewCaveOpenedInAnotherDirection() {
+	character := suite.createCharacterWithTool()
+	southX, southY, southZ := direction.South.DiffXYZ()
+	eastX, eastY, eastZ := direction.East.DiffXYZ()
+	westX, westY, westZ := direction.West.DiffXYZ()
+	initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
+	initialRoom.AddFlags([]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability})
+	rooms := []*app.Room{
+		initialRoom,
+		app.Room{}.Create(southX, southY, southZ, roomBiom.Forest),
+		app.Room{}.Create(eastX, eastY, eastZ, roomBiom.Forest),
+		app.Room{}.Create(westX, westY, westZ, roomBiom.Forest),
+	}
+	roomRepository := suite.createRoomRepositoryWithRooms(rooms)
 	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 
 	commandResult := command.Execute(character)
@@ -193,7 +241,7 @@ func (suite *mineCommandTest) createRoomRepositoryWithMountainRoom(
 	room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Mountain)
 	room.AddFlags(roomFlags)
 
-	return suite.createRoomRepositoryWithRoom(room), room
+	return suite.createRoomRepositoryWithRooms([]*app.Room{room}), room
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithCaveRoom(
@@ -203,17 +251,17 @@ func (suite *mineCommandTest) createRoomRepositoryWithCaveRoom(
 	room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
 	room.AddFlags(roomFlags)
 
-	return suite.createRoomRepositoryWithRoom(room), room
+	return suite.createRoomRepositoryWithRooms([]*app.Room{room}), room
 }
 
 func (suite *mineCommandTest) createRoomRepositoryWithForestRoom(character *app.Character) (app.RoomRepository, *app.Room) {
 	room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest)
 
-	return suite.createRoomRepositoryWithRoom(room), room
+	return suite.createRoomRepositoryWithRooms([]*app.Room{room}), room
 }
 
-func (suite *mineCommandTest) createRoomRepositoryWithRoom(room *app.Room) app.RoomRepository {
-	return app.RoomMemoryRepository{}.Create([]*app.Room{room})
+func (suite *mineCommandTest) createRoomRepositoryWithRooms(rooms []*app.Room) app.RoomRepository {
+	return app.RoomMemoryRepository{}.Create(rooms)
 }
 
 func (suite *mineCommandTest) createCharacterWithoutTool() *app.Character {

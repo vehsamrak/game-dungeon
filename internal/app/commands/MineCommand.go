@@ -50,7 +50,6 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 
 		newCaveFound := command.random.RandomBoolean()
 		if room.HasFlag(roomFlag.CaveProbability) && newCaveFound {
-			newCaveDirectionKey := command.random.RandomNumber(3)
 			newCaveDirections := []direction.Direction{
 				direction.North,
 				direction.South,
@@ -58,7 +57,22 @@ func (command *MineCommand) Execute(character Character, arguments ...interface{
 				direction.West,
 			}
 
-			command.createCave(character, newCaveDirections[newCaveDirectionKey])
+			var caveError gameError.Error
+			for i := len(newCaveDirections); i > 0; i-- {
+				newCaveDirectionKey := command.random.RandomNumber(len(newCaveDirections) - 1)
+				_, _, _, caveError = command.createCave(character, newCaveDirections[newCaveDirectionKey])
+
+				if caveError == "" {
+					return
+				}
+
+				newCaveDirections[newCaveDirectionKey] = newCaveDirections[len(newCaveDirections)-1]
+				newCaveDirections = newCaveDirections[:len(newCaveDirections)-1]
+			}
+
+			if caveError != "" {
+				result.AddError(caveError)
+			}
 		}
 	} else {
 		result.AddError(gameError.OreNotFound)
@@ -77,9 +91,14 @@ func (command *MineCommand) mineMountain(room *app.Room, character Character, re
 			return
 		}
 
-		x, y, z := command.createCave(character, direction.Down)
+		x, y, z, err := command.createCave(character, direction.Down)
 
-		character.Move(x, y, z)
+		if err == "" {
+			character.Move(x, y, z)
+		} else {
+			result.AddError(err)
+		}
+
 	} else {
 		result.AddError(gameError.CaveNotFound)
 	}
@@ -88,11 +107,17 @@ func (command *MineCommand) mineMountain(room *app.Room, character Character, re
 func (command *MineCommand) createCave(
 	character Character,
 	newCaveDirection direction.Direction,
-) (x int, y int, z int) {
+) (x int, y int, z int, err gameError.Error) {
 	xDiff, yDiff, zDiff := newCaveDirection.DiffXYZ()
 	x = character.X() + xDiff
 	y = character.Y() + yDiff
 	z = character.Z() + zDiff
+
+	alreadyExistingRoom := command.roomRepository.FindByXYandZ(x, y, z)
+	if alreadyExistingRoom != nil {
+		err = gameError.RoomAlreadyExist
+		return
+	}
 
 	newRoom := app.Room{}.Create(x, y, z, roomBiom.Cave)
 	newRoom.AddFlag(roomFlag.OreProbability)
@@ -103,5 +128,5 @@ func (command *MineCommand) createCave(
 
 	command.roomRepository.AddRoom(newRoom)
 
-	return x, y, z
+	return
 }
