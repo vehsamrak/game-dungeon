@@ -145,6 +145,7 @@ func (suite *exploreCommandTest) provideDisallowedFromExploreBioms() []struct {
 		{roomBiom.Water},
 		{roomBiom.Cliff},
 		{roomBiom.Cave},
+		{roomBiom.Air},
 	}
 }
 

@@ -68,9 +68,16 @@ func (command *ExploreCommand) generateRandomBiom() roomBiom.Biom {
 }
 
 func (command *ExploreCommand) checkInitialRoom(room *app.Room) (err gameError.Error) {
+	disallowedBioms := map[roomBiom.Biom]bool{
+		roomBiom.Water: true,
+		roomBiom.Cave:  true,
+		roomBiom.Cliff: true,
+		roomBiom.Air:   true,
+	}
+
 	if room == nil {
 		err = gameError.RoomNotFound
-	} else if room.Biom() == roomBiom.Water || room.Biom() == roomBiom.Cliff || room.Biom() == roomBiom.Cave {
+	} else if _, biomIsDissalowed := disallowedBioms[room.Biom()]; biomIsDissalowed {
 		err = gameError.WrongBiom
 	}
 
