@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
@@ -32,15 +33,17 @@ func (Client) Create() *Client {
 
 func (client *Client) Start() {
 	client.output("Game started")
+	client.ShowPrompt()
+	client.showEmptyLine()
+	client.output("Enter command:")
+	client.showEmptyLine()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	client.output("Enter command:")
-
 	for scanner.Scan() {
-		client.outputEmptyLine()
+		client.showEmptyLine()
 		client.ExecuteCommand(scanner.Text())
 		client.ShowPrompt()
-		client.outputEmptyLine()
+		client.showEmptyLine()
 	}
 
 	if scanner.Err() != nil {
@@ -87,7 +90,7 @@ func (client *Client) ShowPrompt() {
 
 	client.output(
 		fmt.Sprintf(
-			"Biom: %s Coordinates: [%d/%d/%d]",
+			"Biom: %s [%d/%d/%d]",
 			biom,
 			client.character.X(),
 			client.character.Y(),
@@ -95,21 +98,47 @@ func (client *Client) ShowPrompt() {
 		),
 	)
 
-	client.output("Room flags:")
+	var roomFlags []string
 	for roomFlag := range room.Flags() {
-		client.output(roomFlag.String())
+		roomFlags = append(roomFlags, roomFlag.String())
 	}
+
+	client.output("Room flags: " + strings.Join(roomFlags, ", "))
 
 	client.output("Items:")
 	for _, item := range client.character.Inventory() {
 		client.output(item)
 	}
+
+	var exits []string
+	directions := []direction.Direction{
+		direction.North,
+		direction.South,
+		direction.East,
+		direction.West,
+		direction.Up,
+		direction.Down,
+	}
+
+	for _, exitDirection := range directions {
+		x, y, z := exitDirection.DiffXYZ()
+		exitRoom := client.roomRepository.FindByXYandZ(
+			client.character.X()+x,
+			client.character.Y()+y,
+			client.character.Z()+z,
+		)
+		if exitRoom != nil {
+			exits = append(exits, exitDirection.String())
+		}
+	}
+
+	client.output("Exits: " + strings.Join(exits, ", "))
 }
 
 func (client *Client) output(message interface{}) {
 	fmt.Printf("%v\n", message)
 }
 
-func (client *Client) outputEmptyLine() {
+func (client *Client) showEmptyLine() {
 	fmt.Printf("----------------\n")
 }
