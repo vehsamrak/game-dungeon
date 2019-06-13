@@ -31,10 +31,9 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		return
 	}
 
-	characterRoom := command.roomRepository.FindByXYZ(character)
-	if characterRoom != nil && characterRoom.Biom() == roomBiom.Cave {
-		result.AddError(gameError.WrongBiom)
-
+	err = command.checkInitialRoom(command.roomRepository.FindByXYZ(character))
+	if err != "" {
+		result.AddError(err)
 		return
 	}
 
@@ -66,4 +65,14 @@ func (command *ExploreCommand) generateRandomBiom() roomBiom.Biom {
 	randomNumber := command.random.RandomNumber(len(bioms) - 1)
 
 	return bioms[randomNumber]
+}
+
+func (command *ExploreCommand) checkInitialRoom(room *app.Room) (err gameError.Error) {
+	if room == nil {
+		err = gameError.RoomNotFound
+	} else if room.Biom() == roomBiom.Water || room.Biom() == roomBiom.Cliff || room.Biom() == roomBiom.Cave {
+		err = gameError.WrongBiom
+	}
+
+	return
 }

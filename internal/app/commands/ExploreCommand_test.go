@@ -25,9 +25,10 @@ type exploreCommandTest struct {
 func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithBiomAndFlagsAndCharacterMovedToNewRoom() {
 	allBiomsAreCorrect := true
 	for id, dataset := range suite.provideRoomBiomAndFlags() {
-		roomRepository := &app.RoomMemoryRepository{}
-		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
 		character := suite.createCharacter()
+		roomRepository := &app.RoomMemoryRepository{}
+		roomRepository.AddRoom(app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest))
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
 		commandDirection := direction.North
 		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
 		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
@@ -54,12 +55,12 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 
 func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExistedRoom_moveCommandExecuted() {
 	commandDirection := direction.North
-	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
-	room := app.Room{}.Create(targetRoomX, targetRoomY, targetRoomZ, roomBiom.Forest)
-	roomRepository := &app.RoomMemoryRepository{}
-	roomRepository.AddRoom(room)
-	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	character := suite.createCharacter()
+	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+	initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest)
+	destinationRoom := app.Room{}.Create(targetRoomX, targetRoomY, targetRoomZ, roomBiom.Forest)
+	roomRepository := app.RoomMemoryRepository{}.Create([]*app.Room{initialRoom, destinationRoom})
+	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 	roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 	result := command.Execute(character, commandDirection.String())
@@ -72,20 +73,32 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	assert.Equal(suite.T(), targetRoomY, character.Y())
 }
 
-func (suite *exploreCommandTest) Test_Execute_characterInCaveBiomAndNoNearRooms_wrongBiom() {
-	character := suite.createCharacter()
-	room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
-	roomRepository := &app.RoomMemoryRepository{}
-	roomRepository.AddRoom(room)
-	commandDirection := direction.North
-	targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
-	command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+func (suite *exploreCommandTest) Test_Execute_characterInDisallowedFromExploreBiomAndNoNearRooms_wrongBiom() {
+	for id, dataset := range suite.provideDisallowedFromExploreBioms() {
+		character := suite.createCharacter()
+		room := app.Room{}.Create(character.X(), character.Y(), character.Z(), dataset.biom)
+		roomRepository := app.RoomMemoryRepository{}.Create([]*app.Room{room})
+		commandDirection := direction.North
+		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
 
-	result := command.Execute(character, commandDirection.String())
+		result := command.Execute(character, commandDirection.String())
 
-	assert.True(suite.T(), result.HasError(gameError.WrongBiom))
-	assert.Nil(suite.T(), roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ))
-	assert.NotEqual(suite.T(), targetRoomX+targetRoomY, character.X()+character.Y())
+		assert.True(suite.T(), result.HasError(gameError.WrongBiom), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.Nil(
+			suite.T(),
+			roomRepository.FindByXYandZ(
+				targetRoomX,
+				targetRoomY,
+				targetRoomZ,
+			),
+			fmt.Sprintf("Dataset %v %#v", id, dataset),
+		)
+		assert.NotEqual(
+			suite.T(),
+			targetRoomX+targetRoomY, character.X()+character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset),
+		)
+	}
 }
 
 func (suite *exploreCommandTest) createCharacter() commands.Character {
@@ -120,6 +133,18 @@ func (suite *exploreCommandTest) provideRoomBiomAndFlags() []struct {
 		{5, roomBiom.Air, []roomFlag.Flag{}},
 		{11, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
 		{26, roomBiom.Mountain, []roomFlag.Flag{roomFlag.CaveProbability}},
+	}
+}
+
+func (suite *exploreCommandTest) provideDisallowedFromExploreBioms() []struct {
+	biom roomBiom.Biom
+} {
+	return []struct {
+		biom roomBiom.Biom
+	}{
+		{roomBiom.Water},
+		{roomBiom.Cliff},
+		{roomBiom.Cave},
 	}
 }
 

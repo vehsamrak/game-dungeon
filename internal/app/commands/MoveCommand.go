@@ -49,12 +49,10 @@ func (command *MoveCommand) Execute(character Character, arguments ...string) (r
 }
 
 func (command *MoveCommand) checkRoomMobility(initialRoom *app.Room, destinationRoom *app.Room) (err gameError.Error) {
-	if initialRoom == nil {
+	if initialRoom == nil || destinationRoom == nil {
 		err = gameError.RoomNotFound
 	} else if initialRoom.Biom() == roomBiom.Water && destinationRoom.Biom() == roomBiom.Water {
 		err = gameError.CantMoveFromWater
-	} else if destinationRoom == nil {
-		err = gameError.RoomNotFound
 	} else if destinationRoom.HasFlag(roomFlag.Unfordable) {
 		err = gameError.RoomUnfordable
 	}
