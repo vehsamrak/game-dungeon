@@ -19,7 +19,7 @@ type roomRepositoryTest struct {
 
 func (suite *roomRepositoryTest) Test_FindByXYandZ_existingXYZ_room() {
 	repository := app.RoomMemoryRepository{}.Create(nil)
-	x, y, z := 1, 1, 0
+	x, y, z := 0, 0, 0
 
 	room := repository.FindByXYandZ(x, y, z)
 

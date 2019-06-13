@@ -9,9 +9,7 @@ type RoomMemoryRepository struct {
 func (repository RoomMemoryRepository) Create(rooms []*Room) RoomRepository {
 	if rooms == nil {
 		rooms = []*Room{
-			{x: 0, y: 0, z: 0, biom: roomBiom.Plain},
-			{x: -1, y: 0, z: 0, biom: roomBiom.Plain},
-			{x: 1, y: 1, z: 0, biom: roomBiom.Plain},
+			{x: 0, y: 0, z: 0, biom: roomBiom.Town},
 		}
 	}
 
