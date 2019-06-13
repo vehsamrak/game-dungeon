@@ -55,6 +55,7 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 				direction.South,
 				direction.East,
 				direction.West,
+				direction.Down,
 			}
 
 			var caveError gameError.Error
@@ -63,7 +64,7 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 				_, _, _, caveError = command.createCave(character, newCaveDirections[newCaveDirectionKey])
 
 				if caveError == "" {
-					return
+					break
 				}
 
 				newCaveDirections[newCaveDirectionKey] = newCaveDirections[len(newCaveDirections)-1]
@@ -74,6 +75,8 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 				result.AddError(caveError)
 			}
 		}
+
+		room.RemoveFlag(roomFlag.CaveProbability)
 	} else {
 		result.AddError(gameError.OreNotFound)
 	}

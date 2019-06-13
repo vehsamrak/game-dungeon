@@ -141,9 +141,9 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	assert.True(suite.T(), commandResult.HasError(gameError.OreNotFound))
 }
 
-func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndNoNearRooms_orePlacedToCharacterInventoryAndNewCaveOpened() {
+func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndNoNearRooms_orePlacedToCharacterInventoryAndNewCaveOpenedAndCaveProbabilityRemovedFromInitialRoom() {
 	character := suite.createCharacterWithTool()
-	roomRepository, _ := suite.createRoomRepositoryWithCaveRoom(
+	roomRepository, room := suite.createRoomRepositoryWithCaveRoom(
 		character,
 		[]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability},
 	)
@@ -154,6 +154,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
 	assert.True(suite.T(), suite.isNearCaveOpened(roomRepository))
+	assert.False(suite.T(), room.HasFlag(roomFlag.CaveProbability))
 }
 
 func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAndHasOreProbabilityAndOreAndCaveProbabilityAndAllNearRoomsAlreadyExist_orePlacedToCharacterInventoryAndCaveNotOpened() {
@@ -162,6 +163,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	southX, southY, southZ := direction.South.DiffXYZ()
 	eastX, eastY, eastZ := direction.East.DiffXYZ()
 	westX, westY, westZ := direction.West.DiffXYZ()
+	downX, downY, downZ := direction.Down.DiffXYZ()
 	initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Cave)
 	initialRoom.AddFlags([]roomFlag.Flag{roomFlag.OreProbability, roomFlag.CaveProbability})
 	rooms := []*app.Room{
@@ -170,6 +172,7 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 		app.Room{}.Create(southX, southY, southZ, roomBiom.Forest),
 		app.Room{}.Create(eastX, eastY, eastZ, roomBiom.Forest),
 		app.Room{}.Create(westX, westY, westZ, roomBiom.Forest),
+		app.Room{}.Create(downX, downY, downZ, roomBiom.Forest),
 	}
 	roomRepository := suite.createRoomRepositoryWithRooms(rooms)
 	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
@@ -287,7 +290,13 @@ func (suite *mineCommandTest) createRandomWithSeed(seed int64) *random.Random {
 }
 
 func (suite *mineCommandTest) isNearCaveOpened(roomRepository app.RoomRepository) (nearCaveOpened bool) {
-	directions := []direction.Direction{direction.North, direction.South, direction.East, direction.West}
+	directions := []direction.Direction{
+		direction.North,
+		direction.South,
+		direction.East,
+		direction.West,
+		direction.Down,
+	}
 
 	for _, searchDirection := range directions {
 		x, y, z := searchDirection.DiffXYZ()
