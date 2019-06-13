@@ -41,7 +41,7 @@ func (biom Biom) Flags() []roomFlag.Flag {
 		Water:    {roomFlag.FishProbability},
 		Sand:     {roomFlag.GemProbability},
 		Cliff:    {roomFlag.Unfordable},
-		Hill:     {roomFlag.CaveProbability},
+		Hill:     {},
 		Cave:     {roomFlag.OreProbability, roomFlag.CaveProbability, roomFlag.GemProbability},
 	}
 
