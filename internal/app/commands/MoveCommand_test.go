@@ -48,15 +48,25 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 	expectedCharacterZ int
 	error              gameError.Error
 } {
+	initialForest := app.Room{}.Create(0, 0, 0, roomBiom.Forest)
+	initialWater := app.Room{}.Create(0, 0, 0, roomBiom.Water)
+	northForest := app.Room{}.Create(0, 1, 0, roomBiom.Forest)
+	northWater := app.Room{}.Create(0, 1, 0, roomBiom.Water)
+
 	getRoomRepositoryWithSingleRoom := func(x int, y int, z int, roomFlag roomFlag.Flag) app.RoomRepository {
 		room := app.Room{}.Create(x, y, z, roomBiom.Forest)
 		room.AddFlag(roomFlag)
 
-		return app.RoomMemoryRepository{}.Create([]*app.Room{room})
+		return app.RoomMemoryRepository{}.Create([]*app.Room{initialForest, room})
 	}
 
-	roomNotFound := gameError.RoomNotFound
-	roomUnfordable := gameError.RoomUnfordable
+	getRoomRepositoryWithRooms := func(rooms []*app.Room) app.RoomRepository {
+		return app.RoomMemoryRepository{}.Create(rooms)
+	}
+
+	getRoomRepositoryWithoutRooms := func() app.RoomRepository {
+		return app.RoomMemoryRepository{}.Create(nil)
+	}
 
 	return []struct {
 		direction          direction.Direction
@@ -66,16 +76,16 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		expectedCharacterZ int
 		error              gameError.Error
 	}{
-		{direction.North, getRoomRepositoryWithSingleRoom(0, 0, 0, roomFlag.Road), 0, 0, 0, roomNotFound},
-		{direction.South, getRoomRepositoryWithSingleRoom(0, 0, 0, roomFlag.Road), 0, 0, 0, roomNotFound},
-		{direction.East, getRoomRepositoryWithSingleRoom(0, 0, 0, roomFlag.Road), 0, 0, 0, roomNotFound},
-		{direction.West, getRoomRepositoryWithSingleRoom(0, 0, 0, roomFlag.Road), 0, 0, 0, roomNotFound},
+		{direction.North, getRoomRepositoryWithoutRooms(), 0, 0, 0, gameError.RoomNotFound},
+		{direction.South, getRoomRepositoryWithRooms([]*app.Room{}), 0, 0, 0, gameError.RoomNotFound},
 		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, 0, roomFlag.Road), 0, 1, 0, ""},
 		{direction.South, getRoomRepositoryWithSingleRoom(0, -1, 0, roomFlag.Road), 0, -1, 0, ""},
 		{direction.East, getRoomRepositoryWithSingleRoom(1, 0, 0, roomFlag.Road), 1, 0, 0, ""},
 		{direction.West, getRoomRepositoryWithSingleRoom(-1, 0, 0, roomFlag.Road), -1, 0, 0, ""},
 		{direction.Up, getRoomRepositoryWithSingleRoom(0, 0, 1, roomFlag.Road), 0, 0, 1, ""},
 		{direction.Down, getRoomRepositoryWithSingleRoom(0, 0, -1, roomFlag.Road), 0, 0, -1, ""},
-		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, 0, roomFlag.Unfordable), 0, 0, 0, roomUnfordable},
+		{direction.North, getRoomRepositoryWithSingleRoom(0, 1, 0, roomFlag.Unfordable), 0, 0, 0, gameError.RoomUnfordable},
+		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialWater, northWater}), 0, 0, 0, gameError.CantMoveFromWater},
+		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialWater, northForest}), 0, 1, 0, ""},
 	}
 }

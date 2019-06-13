@@ -4,6 +4,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 )
 
@@ -34,9 +35,10 @@ func (command *MoveCommand) Execute(character Character, arguments ...string) (r
 	y := character.Y() + yDiff
 	z := character.Z() + zDiff
 
-	room := command.roomRepository.FindByXYandZ(x, y, z)
+	initialRoom := command.roomRepository.FindByXYZ(character)
+	destinationRoom := command.roomRepository.FindByXYandZ(x, y, z)
 
-	err = command.checkRoomMobility(room)
+	err = command.checkRoomMobility(initialRoom, destinationRoom)
 	if err == "" {
 		character.Move(x, y, z)
 	} else {
@@ -46,10 +48,14 @@ func (command *MoveCommand) Execute(character Character, arguments ...string) (r
 	return
 }
 
-func (command *MoveCommand) checkRoomMobility(room *app.Room) (err gameError.Error) {
-	if room == nil {
+func (command *MoveCommand) checkRoomMobility(initialRoom *app.Room, destinationRoom *app.Room) (err gameError.Error) {
+	if initialRoom == nil {
 		err = gameError.RoomNotFound
-	} else if room.HasFlag(roomFlag.Unfordable) {
+	} else if initialRoom.Biom() == roomBiom.Water && destinationRoom.Biom() == roomBiom.Water {
+		err = gameError.CantMoveFromWater
+	} else if destinationRoom == nil {
+		err = gameError.RoomNotFound
+	} else if destinationRoom.HasFlag(roomFlag.Unfordable) {
 		err = gameError.RoomUnfordable
 	}
 

@@ -9,6 +9,7 @@ const (
 	WrongBiom              Error = "biom is not applicable"
 	RoomNotFound           Error = "room not found"
 	RoomUnfordable         Error = "room unfordable"
+	CantMoveFromWater      Error = "can't move from water"
 	CaveNotFound           Error = "cave not found"
 	RoomAlreadyExist       Error = "room already exist"
 	CommandNotFound        Error = "command not found"
