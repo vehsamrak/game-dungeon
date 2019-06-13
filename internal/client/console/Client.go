@@ -41,7 +41,12 @@ func (client *Client) Start() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		client.showEmptyLine()
-		client.ExecuteCommand(scanner.Text())
+
+		input := scanner.Text()
+		if input != "" {
+			client.ExecuteCommand(input)
+		}
+
 		client.ShowPrompt()
 		client.showEmptyLine()
 	}
