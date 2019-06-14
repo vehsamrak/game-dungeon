@@ -16,6 +16,7 @@ const (
 	WrongCommandAttributes Error = "wrong command attributes"
 	WrongDirection         Error = "wrong direction"
 	LowHealth              Error = "health is too low"
+	FoodNotFound           Error = "food not found"
 )
 
 func (error Error) Error() string {

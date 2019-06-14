@@ -18,4 +18,8 @@ type Character interface {
 	Health() int
 	MaxHealth() int
 	LowerHealth(healthPoints int)
+	IncreaseHealth(healthPoints int)
+	FindItemWithFlag(flag itemFlag.Flag) *app.Item
+	DropItem(item *app.Item)
+	RestoreHealth()
 }

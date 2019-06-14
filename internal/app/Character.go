@@ -62,14 +62,8 @@ func (character *Character) AddItem(item *Item) {
 }
 
 // HasItemFlag checks character inventory to have given item flag
-func (character *Character) HasItemFlag(itemFlag itemFlag.Flag) bool {
-	for _, item := range character.inventory {
-		if item.HasFlag(itemFlag) {
-			return true
-		}
-	}
-
-	return false
+func (character *Character) HasItemFlag(flag itemFlag.Flag) bool {
+	return character.FindItemWithFlag(flag) != nil
 }
 
 // Health points of character
@@ -82,7 +76,37 @@ func (character *Character) MaxHealth() int {
 	return character.maxHealth
 }
 
+// RestoreHealth sets character health to maximum
+func (character *Character) RestoreHealth() {
+	character.health = character.maxHealth
+}
+
 // LowerHealth lowers character health
 func (character *Character) LowerHealth(healthPoints int) {
 	character.health -= healthPoints
+}
+
+// IncreaseHealth increases character health
+func (character *Character) IncreaseHealth(healthPoints int) {
+	character.health += healthPoints
+}
+
+// FindItemWithFlag returns item with flag from character inventory
+func (character *Character) FindItemWithFlag(flag itemFlag.Flag) *Item {
+	for _, item := range character.inventory {
+		if item.HasFlag(flag) {
+			return item
+		}
+	}
+
+	return nil
+}
+
+// DropItem drops item from character inventory
+func (character *Character) DropItem(item *Item) {
+	for i, inventoryItem := range character.inventory {
+		if inventoryItem == item {
+			character.inventory = append(character.inventory[:i], character.inventory[i+1:]...)
+		}
+	}
 }
