@@ -13,6 +13,10 @@ type ExploreCommand struct {
 	random         *random.Random
 }
 
+func (command *ExploreCommand) HealthPrice() int {
+	return 3
+}
+
 func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *random.Random) *ExploreCommand {
 	return &ExploreCommand{roomRepository: roomRepository, random: random}
 }

@@ -14,6 +14,10 @@ type FishCommand struct {
 	random         *random.Random
 }
 
+func (command *FishCommand) HealthPrice() int {
+	return 1
+}
+
 func (command FishCommand) Create(roomRepository app.RoomRepository, random *random.Random) *FishCommand {
 	return &FishCommand{roomRepository: roomRepository, random: random}
 }

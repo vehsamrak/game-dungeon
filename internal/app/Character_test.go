@@ -78,7 +78,7 @@ func (suite *characterTest) Test_Health_characterWithHealthPoints_HealthPointsRe
 
 	healthPoints := character.Health()
 
-	assert.Equal(suite.T(), 10, healthPoints)
+	assert.Equal(suite.T(), 100, healthPoints)
 }
 
 func (suite *characterTest) createCharacter() *app.Character {

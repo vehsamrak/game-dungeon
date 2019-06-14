@@ -11,6 +11,10 @@ type CutTreeCommand struct {
 	roomRepository app.RoomRepository
 }
 
+func (command *CutTreeCommand) HealthPrice() int {
+	return 3
+}
+
 func (command CutTreeCommand) Create(roomRepository app.RoomRepository) *CutTreeCommand {
 	return &CutTreeCommand{roomRepository: roomRepository}
 }

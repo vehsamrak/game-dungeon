@@ -16,6 +16,10 @@ func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveComman
 	return &MoveCommand{roomRepository: roomRepository}
 }
 
+func (command *MoveCommand) HealthPrice() int {
+	return 1
+}
+
 func (command *MoveCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
 

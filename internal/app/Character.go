@@ -13,7 +13,7 @@ type Character struct {
 
 // Create new character
 func (character Character) Create(name string) *Character {
-	return &Character{name: name, health: 10}
+	return &Character{name: name, health: 100}
 }
 
 // Name of character

@@ -15,6 +15,10 @@ type MineCommand struct {
 	random         *random.Random
 }
 
+func (command *MineCommand) HealthPrice() int {
+	return 5
+}
+
 func (command MineCommand) Create(roomRepository app.RoomRepository, random *random.Random) *MineCommand {
 	return &MineCommand{roomRepository: roomRepository, random: random}
 }
