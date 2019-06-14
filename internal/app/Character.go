@@ -68,6 +68,13 @@ func (character *Character) HasItemFlag(itemFlag itemFlag.Flag) bool {
 
 	return false
 }
+
+// Health points of character
 func (character *Character) Health() int {
 	return character.health
+}
+
+// LowerHealth lowers character health
+func (character *Character) LowerHealth(healthPoints int) {
+	character.health -= healthPoints
 }

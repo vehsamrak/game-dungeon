@@ -4,6 +4,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
+	"strings"
 )
 
 type Commander struct {
@@ -23,6 +24,40 @@ func (commander *Commander) Commands() map[string]GameCommand {
 		"mine":    MineCommand{}.Create(commander.roomRepository, commander.random),
 		"fish":    FishCommand{}.Create(commander.roomRepository, commander.random),
 	}
+}
+
+func (commander *Commander) Execute(character Character, commandWithArguments []string) (
+	commandResult CommandResult,
+	errors map[gameError.Error]bool,
+) {
+	commandName := commandWithArguments[0]
+	commandArguments := commandWithArguments[1:]
+	errors = make(map[gameError.Error]bool)
+
+	command, err := commander.Command(commandName)
+	if err != "" {
+		errors[err] = true
+		return
+	}
+
+	characterHealth := character.Health()
+	commandHealthPrice := command.HealthPrice()
+
+	if characterHealth <= commandHealthPrice {
+		errors[gameError.LowHealth] = true
+	}
+
+	character.LowerHealth(commandHealthPrice)
+
+	commandResult = command.Execute(character, strings.Join(commandArguments, " "))
+
+	if commandResult.HasErrors() {
+		for err := range commandResult.Errors() {
+			errors[err] = true
+		}
+	}
+
+	return
 }
 
 func (commander *Commander) Command(commandName string) (command GameCommand, err gameError.Error) {

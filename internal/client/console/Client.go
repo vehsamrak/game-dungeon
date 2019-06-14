@@ -6,7 +6,6 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 	"os"
@@ -58,25 +57,11 @@ func (client *Client) Start() {
 
 func (client *Client) ExecuteCommand(input string) {
 	commandWithArguments := strings.Fields(input)
-	command, err := client.commander.Command(commandWithArguments[0])
-
-	errors := make(map[gameError.Error]bool)
-	if err == "" {
-		commandResult := command.Execute(client.character, strings.Join(commandWithArguments[1:], " "))
-
-		if commandResult.HasErrors() {
-			for err := range commandResult.Errors() {
-				errors[err] = true
-			}
-		}
-	} else {
-		errors[err] = true
-	}
+	_, errors := client.commander.Execute(client.character, commandWithArguments)
 
 	for err := range errors {
 		client.output("Error: " + err.Error() + "\n")
 	}
-
 }
 
 func (client *Client) ShowPrompt() {

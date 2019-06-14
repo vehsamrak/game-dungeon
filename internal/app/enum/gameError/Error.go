@@ -15,6 +15,7 @@ const (
 	CommandNotFound        Error = "command not found"
 	WrongCommandAttributes Error = "wrong command attributes"
 	WrongDirection         Error = "wrong direction"
+	LowHealth              Error = "health is too low"
 )
 
 func (error Error) Error() string {
