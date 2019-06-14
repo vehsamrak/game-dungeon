@@ -9,4 +9,5 @@ const (
 	ResourceWood Flag = "resource_wood"
 	ResourceFish Flag = "resource_fish"
 	ResourceOre  Flag = "resource_ore"
+	Food         Flag = "food"
 )

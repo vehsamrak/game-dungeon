@@ -39,6 +39,7 @@ func (command *FishCommand) Execute(character Character, arguments ...string) (r
 	if room != nil && room.HasFlag(roomFlag.FishProbability) && resourceFound {
 		fish := app.Item{}.Create()
 		fish.AddFlag(itemFlag.ResourceFish)
+		fish.AddFlag(itemFlag.Food)
 		character.AddItem(fish)
 	} else {
 		result.AddError(gameError.FishNotFound)

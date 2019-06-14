@@ -62,6 +62,7 @@ func (suite *fishCommandTest) Test_Execute_characterWithToolAndRoomIsWaterBiomAn
 	assert.True(suite.T(), commandResult.HasError(gameError.FishNotFound))
 	assert.Equal(suite.T(), character.Inventory(), characterBeforeCommand.Inventory())
 	assert.False(suite.T(), character.HasItemFlag(itemFlag.ResourceFish))
+	assert.False(suite.T(), character.HasItemFlag(itemFlag.Food))
 }
 
 func (suite *fishCommandTest) Test_Execute_characterWithToolAndRoomIsWaterBiomAndHasFishProbabilityAndRandomRolledFish_fishAppearsInCharacterInventory() {
@@ -75,6 +76,7 @@ func (suite *fishCommandTest) Test_Execute_characterWithToolAndRoomIsWaterBiomAn
 	assert.False(suite.T(), commandResult.HasErrors())
 	assert.NotEqual(suite.T(), character.Inventory(), characterBeforeCommand.Inventory())
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceFish))
+	assert.True(suite.T(), character.HasItemFlag(itemFlag.Food))
 }
 
 func (suite *fishCommandTest) createRoomRepositoryWithWaterRoom(
