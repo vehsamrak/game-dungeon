@@ -7,12 +7,13 @@ type Character struct {
 	x         int
 	y         int
 	z         int
+	health    int
 	inventory []*Item
 }
 
 // Create new character
 func (character Character) Create(name string) *Character {
-	return &Character{name: name}
+	return &Character{name: name, health: 10}
 }
 
 // Name of character
@@ -66,4 +67,7 @@ func (character *Character) HasItemFlag(itemFlag itemFlag.Flag) bool {
 	}
 
 	return false
+}
+func (character *Character) Health() int {
+	return character.health
 }

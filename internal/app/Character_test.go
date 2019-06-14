@@ -73,6 +73,14 @@ func (suite *characterTest) Test_AddItem_characterWithoutItems_characterMustReve
 	assert.Len(suite.T(), character.Inventory(), 3)
 }
 
+func (suite *characterTest) Test_Health_characterWithHealthPoints_HealthPointsReturned() {
+	character := suite.createCharacter()
+
+	healthPoints := character.Health()
+
+	assert.Equal(suite.T(), 10, healthPoints)
+}
+
 func (suite *characterTest) createCharacter() *app.Character {
 	return app.Character{}.Create(suite.name)
 }
