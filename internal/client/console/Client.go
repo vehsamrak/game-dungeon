@@ -31,10 +31,12 @@ func (Client) Create() *Client {
 }
 
 func (client *Client) Start() {
-	client.output("Game started")
+	client.showEmptyLine()
+	client.outputNewline("Game started")
+	client.showEmptyLine()
 	client.ShowPrompt()
 	client.showEmptyLine()
-	client.output("Enter command:")
+	client.outputNewline("Enter command:")
 	client.showEmptyLine()
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -51,7 +53,7 @@ func (client *Client) Start() {
 	}
 
 	if scanner.Err() != nil {
-		client.output("Error occurred!")
+		client.outputNewline("Error occurred!")
 	}
 }
 
@@ -60,7 +62,7 @@ func (client *Client) ExecuteCommand(input string) {
 	_, errors := client.commander.Execute(client.character, commandWithArguments)
 
 	for err := range errors {
-		client.output("Error: " + err.Error() + "\n")
+		client.outputNewline("Error: " + err.Error() + "\n")
 	}
 }
 
@@ -71,6 +73,8 @@ func (client *Client) ShowPrompt() {
 		client.character.Z(),
 	)
 
+	client.outputInline(fmt.Sprintf("%d/100 HP | ", client.character.Health()))
+
 	var biom string
 	if room != nil {
 		biom = room.Biom().String()
@@ -78,9 +82,9 @@ func (client *Client) ShowPrompt() {
 		biom = "N/A"
 	}
 
-	client.output(
+	client.outputInline(
 		fmt.Sprintf(
-			"Biom: %s [%d/%d/%d]",
+			"%s [%d/%d/%d] | ",
 			biom,
 			client.character.X(),
 			client.character.Y(),
@@ -93,11 +97,11 @@ func (client *Client) ShowPrompt() {
 		roomFlags = append(roomFlags, roomFlag.String())
 	}
 
-	client.output("Room flags: " + strings.Join(roomFlags, ", "))
+	client.outputNewline("Room flags: " + strings.Join(roomFlags, ", "))
 
-	client.output("Items:")
+	client.outputNewline("Items:")
 	for _, item := range client.character.Inventory() {
-		client.output(item)
+		client.outputNewline(item)
 	}
 
 	var exits []string
@@ -122,13 +126,26 @@ func (client *Client) ShowPrompt() {
 		}
 	}
 
-	client.output("Exits: " + strings.Join(exits, ", "))
-}
-
-func (client *Client) output(message interface{}) {
-	fmt.Printf("%v\n", message)
+	client.outputNewline("Exits: " + strings.Join(exits, ", "))
 }
 
 func (client *Client) showEmptyLine() {
-	fmt.Printf("----------------\n")
+	client.outputNewline("----------------")
+}
+
+func (client *Client) outputNewline(message interface{}) {
+	client.output(message, true)
+}
+
+func (client *Client) outputInline(message interface{}) {
+	client.output(message, false)
+}
+
+func (client *Client) output(message interface{}, isNewLine bool) {
+	newLine := ""
+	if isNewLine {
+		newLine = "\n"
+	}
+
+	fmt.Printf("%v%s", message, newLine)
 }

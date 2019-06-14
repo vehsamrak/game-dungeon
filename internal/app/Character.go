@@ -7,13 +7,16 @@ type Character struct {
 	x         int
 	y         int
 	z         int
+	maxHealth int
 	health    int
 	inventory []*Item
 }
 
 // Create new character
 func (character Character) Create(name string) *Character {
-	return &Character{name: name, health: 100}
+	maxHealth := 100
+
+	return &Character{name: name, maxHealth: maxHealth, health: maxHealth}
 }
 
 // Name of character
@@ -72,6 +75,11 @@ func (character *Character) HasItemFlag(itemFlag itemFlag.Flag) bool {
 // Health points of character
 func (character *Character) Health() int {
 	return character.health
+}
+
+// MaxHealth is maximum health points of character
+func (character *Character) MaxHealth() int {
+	return character.maxHealth
 }
 
 // LowerHealth lowers character health

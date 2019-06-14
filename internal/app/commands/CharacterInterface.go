@@ -16,5 +16,6 @@ type Character interface {
 	AddItem(item *app.Item)
 	HasItemFlag(itemFlag itemFlag.Flag) bool
 	Health() int
+	MaxHealth() int
 	LowerHealth(healthPoints int)
 }
