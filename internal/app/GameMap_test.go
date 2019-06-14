@@ -66,6 +66,6 @@ func (RoomRepositoryMock) FindByXYandZ(x int, y int, z int) *app.Room {
 func (RoomRepositoryMock) AddRoom(room *app.Room) {
 }
 
-func (RoomRepositoryMock) FindByXYZ(XYZ app.XYInterface) *app.Room {
+func (RoomRepositoryMock) FindByXYZ(XYZ app.XYZInterface) *app.Room {
 	return nil
 }

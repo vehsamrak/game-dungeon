@@ -1,6 +1,6 @@
 package app
 
-type XYInterface interface {
+type XYZInterface interface {
 	X() int
 	Y() int
 	Z() int

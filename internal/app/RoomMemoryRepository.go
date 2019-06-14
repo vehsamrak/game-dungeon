@@ -26,7 +26,7 @@ func (repository *RoomMemoryRepository) FindByXYandZ(x int, y int, z int) *Room 
 	return nil
 }
 
-func (repository *RoomMemoryRepository) FindByXYZ(XYZ XYInterface) *Room {
+func (repository *RoomMemoryRepository) FindByXYZ(XYZ XYZInterface) *Room {
 	return repository.FindByXYandZ(XYZ.X(), XYZ.Y(), XYZ.Z())
 }
 
