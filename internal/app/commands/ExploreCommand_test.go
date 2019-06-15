@@ -39,7 +39,12 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Nil(suite.T(), roomBeforeExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
-		biomIsCorrect := assert.Equal(suite.T(), dataset.biom, roomAfterExploration.Biom(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		biomIsCorrect := assert.Equal(
+			suite.T(),
+			dataset.biom,
+			roomAfterExploration.Biom(),
+			fmt.Sprintf("Dataset %v %#v", id, dataset),
+		)
 		if !biomIsCorrect {
 			allBiomsAreCorrect = false
 		}
@@ -101,6 +106,19 @@ func (suite *exploreCommandTest) Test_Execute_characterInDisallowedFromExploreBi
 	}
 }
 
+func (suite *exploreCommandTest) Test_Execute_characterInExplorableBiomAndNoNearRoomsAndWrongDirection_wrongDirection() {
+	for id, dataset := range suite.provideDisallowedDirections() {
+		character := suite.createCharacter()
+		room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest)
+		roomRepository := app.RoomMemoryRepository{}.Create([]*app.Room{room})
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
+
+		result := command.Execute(character, dataset.direction.String())
+
+		assert.True(suite.T(), result.HasError(gameError.WrongDirection), fmt.Sprintf("Dataset %v %#v", id, dataset))
+	}
+}
+
 func (suite *exploreCommandTest) createCharacter() commands.Character {
 	return &app.Character{}
 }
@@ -146,6 +164,17 @@ func (suite *exploreCommandTest) provideDisallowedFromExploreBioms() []struct {
 		{roomBiom.Cliff},
 		{roomBiom.Cave},
 		{roomBiom.Air},
+	}
+}
+
+func (suite *exploreCommandTest) provideDisallowedDirections() []struct {
+	direction direction.Direction
+} {
+	return []struct {
+		direction direction.Direction
+	}{
+		{direction.Up},
+		{direction.Down},
 	}
 }
 

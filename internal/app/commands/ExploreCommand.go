@@ -35,6 +35,12 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		return
 	}
 
+	directionAllowed := command.checkDirection(exploreDirection)
+	if !directionAllowed {
+		result.AddError(gameError.WrongDirection)
+		return
+	}
+
 	err = command.checkInitialRoom(command.roomRepository.FindByXYZ(character))
 	if err != "" {
 		result.AddError(err)
@@ -84,6 +90,19 @@ func (command *ExploreCommand) checkInitialRoom(room *app.Room) (err gameError.E
 	} else if _, biomIsDissalowed := disallowedBioms[room.Biom()]; biomIsDissalowed {
 		err = gameError.WrongBiom
 	}
+
+	return
+}
+
+func (command *ExploreCommand) checkDirection(exploreDirection direction.Direction) (directionAllowed bool) {
+	allowedDirections := map[direction.Direction]bool{
+		direction.North: true,
+		direction.South: true,
+		direction.West:  true,
+		direction.East:  true,
+	}
+
+	_, directionAllowed = allowedDirections[exploreDirection]
 
 	return
 }
