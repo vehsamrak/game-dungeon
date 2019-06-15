@@ -91,7 +91,7 @@ func (suite *characterTest) provideFlagAndItems() []struct {
 	characterHasFlag bool
 } {
 	axe := app.Item{}.Create()
-	axe.AddFlag(itemFlag.CutTree)
+	axe.AddFlag(itemFlag.CutTreeTool)
 
 	tree := app.Item{}.Create()
 	tree.AddFlag(itemFlag.ResourceWood)
@@ -101,8 +101,8 @@ func (suite *characterTest) provideFlagAndItems() []struct {
 		items            []*app.Item
 		characterHasFlag bool
 	}{
-		{itemFlag.CutTree, []*app.Item{axe}, true},
-		{itemFlag.CutTree, []*app.Item{tree}, false},
+		{itemFlag.CutTreeTool, []*app.Item{axe}, true},
+		{itemFlag.CutTreeTool, []*app.Item{tree}, false},
 		{itemFlag.ResourceWood, []*app.Item{axe}, false},
 		{itemFlag.ResourceWood, []*app.Item{tree}, true},
 		{itemFlag.ResourceWood, []*app.Item{axe, tree}, true},

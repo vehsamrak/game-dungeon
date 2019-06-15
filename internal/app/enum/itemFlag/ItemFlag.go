@@ -3,7 +3,7 @@ package itemFlag
 type Flag string
 
 const (
-	CutTree      Flag = "cut_tree"
+	CutTreeTool  Flag = "cut_tree"
 	FishTool     Flag = "fish_tool"
 	MineTool     Flag = "mine_tool"
 	ResourceWood Flag = "resource_wood"

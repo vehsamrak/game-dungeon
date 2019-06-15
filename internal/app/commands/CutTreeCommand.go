@@ -23,7 +23,7 @@ func (command *CutTreeCommand) Execute(character Character, arguments ...string)
 	result = commandResult{}.Create()
 	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 
-	if room != nil && character.HasItemFlag(itemFlag.CutTree) && room.HasFlag(roomFlag.Trees) {
+	if room != nil && character.HasItemFlag(itemFlag.CutTreeTool) && room.HasFlag(roomFlag.Trees) {
 		wood := app.Item{}.Create()
 		wood.AddFlag(itemFlag.ResourceWood)
 		character.AddItem(wood)
