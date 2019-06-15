@@ -23,6 +23,7 @@ func (commander *Commander) Commands() map[string]GameCommand {
 		"explore": ExploreCommand{}.Create(commander.roomRepository, commander.random),
 		"mine":    MineCommand{}.Create(commander.roomRepository, commander.random),
 		"fish":    FishCommand{}.Create(commander.roomRepository, commander.random),
+		"eat":     EatCommand{}.Create(),
 	}
 }
 
@@ -45,6 +46,7 @@ func (commander *Commander) Execute(character Character, commandWithArguments []
 
 	if characterHealth <= commandHealthPrice {
 		errors[gameError.LowHealth] = true
+		return
 	}
 
 	commandResult = command.Execute(character, strings.Join(commandArguments, " "))
