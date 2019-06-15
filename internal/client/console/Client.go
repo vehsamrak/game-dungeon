@@ -48,7 +48,16 @@ func (client *Client) Start() {
 
 		input := scanner.Text()
 		if input != "" {
-			client.ExecuteCommand(input)
+			switch input {
+			case "inventory":
+				client.outputNewline("Items:")
+				for _, item := range client.character.Inventory() {
+					client.outputNewline(item)
+				}
+				client.showEmptyLine()
+			default:
+				client.ExecuteCommand(input)
+			}
 		}
 
 		client.ShowPrompt()
@@ -102,11 +111,6 @@ func (client *Client) ShowPrompt() {
 
 	client.outputNewline("Room flags: " + strings.Join(roomFlags, ", "))
 
-	client.outputNewline("Items:")
-	for _, item := range client.character.Inventory() {
-		client.outputNewline(item)
-	}
-
 	var exits []string
 	directions := []direction.Direction{
 		direction.North,
@@ -129,7 +133,14 @@ func (client *Client) ShowPrompt() {
 		}
 	}
 
-	client.outputNewline("Exits: " + strings.Join(exits, ", "))
+	var exitsString string
+	if len(exits) > 0 {
+		exitsString = strings.Join(exits, ", ")
+	} else {
+		exitsString = "not explored. (type \"explore [north/south/east/west]\")"
+	}
+
+	client.outputNewline("Exits: " + exitsString)
 }
 
 func (client *Client) showEmptyLine() {
