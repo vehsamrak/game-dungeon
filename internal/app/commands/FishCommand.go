@@ -47,6 +47,7 @@ func (command *FishCommand) Execute(character Character, arguments ...string) (r
 		character.AddItem(fish)
 	} else {
 		result.AddError(gameError.FishNotFound)
+		result.SetLowerHealthOnError(true)
 	}
 
 	return result

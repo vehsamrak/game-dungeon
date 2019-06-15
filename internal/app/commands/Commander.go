@@ -47,14 +47,16 @@ func (commander *Commander) Execute(character Character, commandWithArguments []
 		errors[gameError.LowHealth] = true
 	}
 
-	character.LowerHealth(commandHealthPrice)
-
 	commandResult = command.Execute(character, strings.Join(commandArguments, " "))
 
 	if commandResult.HasErrors() {
 		for err := range commandResult.Errors() {
 			errors[err] = true
 		}
+	}
+
+	if commandResult.HasErrors() == false || (commandResult.HasErrors() && commandResult.LowerHealthOnError()) {
+		character.LowerHealth(commandHealthPrice)
 	}
 
 	return

@@ -5,13 +5,23 @@ import (
 )
 
 type commandResult struct {
-	errors map[gameError.Error]bool
+	lowerHealthOnError bool
+	errors             map[gameError.Error]bool
 }
 
 func (result commandResult) Create() CommandResult {
 	return &commandResult{
-		errors: make(map[gameError.Error]bool),
+		lowerHealthOnError: false,
+		errors:             make(map[gameError.Error]bool),
 	}
+}
+
+func (result *commandResult) SetLowerHealthOnError(lowerHealth bool) {
+	result.lowerHealthOnError = lowerHealth
+}
+
+func (result *commandResult) LowerHealthOnError() bool {
+	return result.lowerHealthOnError
 }
 
 func (result *commandResult) AddError(err gameError.Error) {

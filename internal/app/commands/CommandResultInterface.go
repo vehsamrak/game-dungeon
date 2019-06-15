@@ -5,6 +5,8 @@ import (
 )
 
 type CommandResult interface {
+	LowerHealthOnError() bool
+	SetLowerHealthOnError(lowerHealth bool)
 	AddError(err gameError.Error)
 	HasError(err gameError.Error) bool
 	RemoveError(err gameError.Error)

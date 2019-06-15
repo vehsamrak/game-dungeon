@@ -83,6 +83,7 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 		room.RemoveFlag(roomFlag.CaveProbability)
 	} else {
 		result.AddError(gameError.OreNotFound)
+		result.SetLowerHealthOnError(true)
 	}
 
 	return result
@@ -108,6 +109,7 @@ func (command *MineCommand) mineMountain(room *app.Room, character Character, re
 
 	} else {
 		result.AddError(gameError.CaveNotFound)
+		result.SetLowerHealthOnError(true)
 	}
 }
 

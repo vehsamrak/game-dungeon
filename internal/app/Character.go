@@ -81,7 +81,7 @@ func (character *Character) RestoreHealth() {
 	character.health = character.maxHealth
 }
 
-// LowerHealth lowers character health
+// LowerHealthOnError lowers character health
 func (character *Character) LowerHealth(healthPoints int) {
 	character.health -= healthPoints
 }
