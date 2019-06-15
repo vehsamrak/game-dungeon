@@ -24,6 +24,9 @@ func (Client) Create() *Client {
 	pick := app.Item{}.Create()
 	pick.AddFlag(itemFlag.MineTool)
 	character.AddItem(pick)
+	fishingPole := app.Item{}.Create()
+	fishingPole.AddFlag(itemFlag.FishTool)
+	character.AddItem(fishingPole)
 	randomizer := random.Random{}.Create()
 	commander := commands.Commander{}.Create(roomRepository, randomizer)
 
