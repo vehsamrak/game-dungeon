@@ -3,6 +3,6 @@ package timer
 type Timer string
 
 const (
-	Rest Timer = "rest command"
-	Fish Timer = "fish command"
+	Rest           Timer = "rest command"
+	GatherResource Timer = "gather any resource"
 )

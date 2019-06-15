@@ -149,9 +149,11 @@ func (suite *mineCommandTest) Test_Execute_characterWithToolAndRoomBiomIsCaveAnd
 	)
 	command := commands.MineCommand{}.Create(roomRepository, suite.createRandomWithSeed(1))
 
-	commandResult := command.Execute(character)
+	result := command.Execute(character)
+	secondResult := command.Execute(character)
 
-	assert.False(suite.T(), commandResult.HasErrors())
+	assert.False(suite.T(), result.HasErrors())
+	assert.True(suite.T(), secondResult.HasError(gameError.WaitState))
 	assert.True(suite.T(), character.HasItemFlag(itemFlag.ResourceOre))
 	assert.True(suite.T(), suite.isNearCaveOpened(roomRepository))
 	assert.False(suite.T(), room.HasFlag(roomFlag.CaveProbability))
@@ -276,7 +278,7 @@ func (suite *mineCommandTest) createCharacterWithoutTool() *app.Character {
 func (suite *mineCommandTest) createCharacterWithTool() *app.Character {
 	tool := app.Item{}.Create()
 	tool.AddFlag(itemFlag.MineTool)
-	character := &app.Character{}
+	character := app.Character{}.Create("")
 	character.AddItem(tool)
 
 	return character

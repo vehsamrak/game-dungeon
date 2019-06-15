@@ -7,20 +7,29 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
+	"time"
 )
 
 type MineCommand struct {
 	roomRepository app.RoomRepository
 	random         *random.Random
+	waitState      time.Duration
+	healthPrice    int
 }
 
 func (command *MineCommand) HealthPrice() int {
-	return 5
+	return command.healthPrice
 }
 
 func (command MineCommand) Create(roomRepository app.RoomRepository, random *random.Random) *MineCommand {
-	return &MineCommand{roomRepository: roomRepository, random: random}
+	return &MineCommand{
+		roomRepository: roomRepository,
+		random:         random,
+		healthPrice:    5,
+		waitState:      15 * time.Second,
+	}
 }
 
 func (command *MineCommand) Execute(character Character, arguments ...string) (result CommandResult) {
@@ -31,6 +40,13 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 
 		return
 	}
+
+	if character.TimerActive(timer.GatherResource) {
+		result.AddError(gameError.WaitState)
+		return
+	}
+
+	character.SetTimer(timer.GatherResource, command.waitState)
 
 	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 

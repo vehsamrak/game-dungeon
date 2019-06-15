@@ -40,12 +40,12 @@ func (command *FishCommand) Execute(character Character, arguments ...string) (r
 		return
 	}
 
-	if character.TimerActive(timer.Fish) {
+	if character.TimerActive(timer.GatherResource) {
 		result.AddError(gameError.WaitState)
 		return
 	}
 
-	character.SetTimer(timer.Fish, command.waitState)
+	character.SetTimer(timer.GatherResource, command.waitState)
 
 	room := command.roomRepository.FindByXYandZ(character.X(), character.Y(), character.Z())
 
