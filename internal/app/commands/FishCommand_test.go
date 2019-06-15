@@ -46,9 +46,11 @@ func (suite *fishCommandTest) Test_Execute_characterWithToolAndRoomIsWaterBiomAn
 	roomRepository := suite.createRoomRepositoryWithWaterRoom(character, []roomFlag.Flag{})
 	command := commands.FishCommand{}.Create(roomRepository, suite.createRandomWithSeed(0))
 
-	commandResult := command.Execute(character)
+	result := command.Execute(character)
+	secondResult := command.Execute(character)
 
-	assert.True(suite.T(), commandResult.HasError(gameError.FishNotFound))
+	assert.True(suite.T(), result.HasError(gameError.FishNotFound))
+	assert.True(suite.T(), secondResult.HasError(gameError.WaitState))
 }
 
 func (suite *fishCommandTest) Test_Execute_characterWithToolAndRoomIsWaterBiomAndHasFishProbabilityAndRandomRolledNoFish_fishNotFound() {
@@ -100,7 +102,9 @@ func (suite *fishCommandTest) createRoomRepositoryWithRoom(room *app.Room) app.R
 }
 
 func (suite *fishCommandTest) createCharacterWithoutTools() *app.Character {
-	character := &app.Character{}
+	character := app.Character{}.Create("")
+	item := character.FindItemWithFlag(itemFlag.FishTool)
+	character.DropItem(item)
 
 	return character
 }
