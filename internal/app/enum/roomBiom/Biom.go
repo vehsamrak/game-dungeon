@@ -41,8 +41,8 @@ func (biom Biom) Flags() []roomFlag.Flag {
 		Water:    {roomFlag.FishProbability},
 		Sand:     {roomFlag.GemProbability},
 		Cliff:    {roomFlag.Unfordable},
-		Hill:     {},
 		Cave:     {roomFlag.OreProbability, roomFlag.CaveProbability, roomFlag.GemProbability},
+		Air:      {roomFlag.Unfordable},
 	}
 
 	return flagMap[biom]
