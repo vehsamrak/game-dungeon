@@ -1,21 +1,21 @@
 package commands
 
 import (
-	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 )
 
 type EatCommand struct {
-	roomRepository app.RoomRepository
+	healthPrice int
+	healthGain  int
 }
 
 func (command *EatCommand) HealthPrice() int {
-	return 0
+	return command.healthPrice
 }
 
 func (command EatCommand) Create() *EatCommand {
-	return &EatCommand{}
+	return &EatCommand{healthGain: 10}
 }
 
 func (command *EatCommand) Execute(character Character, arguments ...string) (result CommandResult) {
@@ -24,7 +24,7 @@ func (command *EatCommand) Execute(character Character, arguments ...string) (re
 	if character.HasItemFlag(itemFlag.Food) {
 		item := character.FindItemWithFlag(itemFlag.Food)
 		character.DropItem(item)
-		foodHealthGain := 10
+		foodHealthGain := command.healthGain
 		if character.Health()+foodHealthGain > character.MaxHealth() {
 			character.RestoreHealth()
 		} else {

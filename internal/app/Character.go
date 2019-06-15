@@ -1,6 +1,10 @@
 package app
 
-import "github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+import (
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
+	"time"
+)
 
 type Character struct {
 	name      string
@@ -10,13 +14,14 @@ type Character struct {
 	maxHealth int
 	health    int
 	inventory []*Item
+	timers    map[timer.Timer]time.Time
 }
 
 // Create new character
 func (character Character) Create(name string) *Character {
 	maxHealth := 100
 
-	return &Character{name: name, maxHealth: maxHealth, health: maxHealth}
+	return &Character{name: name, maxHealth: maxHealth, health: maxHealth, timers: make(map[timer.Timer]time.Time)}
 }
 
 // Name of character
@@ -109,4 +114,32 @@ func (character *Character) DropItem(item *Item) {
 			character.inventory = append(character.inventory[:i], character.inventory[i+1:]...)
 		}
 	}
+}
+
+func (character *Character) Timer(timerName timer.Timer) (timeLeft time.Duration) {
+	characterTimer, ok := character.timers[timerName]
+
+	if ok {
+		timeLeft = time.Until(characterTimer)
+	} else {
+		timeLeft = 0
+	}
+
+	return
+}
+
+func (character *Character) TimerActive(timerName timer.Timer) bool {
+	return character.Timer(timerName) > 0
+}
+
+func (character *Character) SetTimer(timer timer.Timer, timeDuration time.Duration) {
+	character.timers[timer] = time.Now().Add(timeDuration)
+}
+
+func (character *Character) DropTimer(timer timer.Timer) {
+	delete(character.timers, timer)
+}
+
+func (character *Character) ResetTimer(timer timer.Timer) {
+	character.timers[timer] = time.Now()
 }

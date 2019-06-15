@@ -37,7 +37,7 @@ func (suite *eatCommandTest) Test_Execute_characterWithoutFood_foodNotFoundError
 }
 
 func (suite *eatCommandTest) Test_Execute_characterInventory_foodRemovedFromInventoryAndHPIncreased() {
-	for id, dataset := range suite.provideCharacter() {
+	for id, dataset := range suite.provideFoodAndCharacterHP() {
 		command := commands.EatCommand{}.Create()
 		character := suite.createCharacter(dataset.food)
 		character.LowerHealth(character.MaxHealth())
@@ -67,7 +67,7 @@ func (suite *eatCommandTest) createCharacter(item *app.Item) *app.Character {
 	return character
 }
 
-func (suite *eatCommandTest) provideCharacter() []struct {
+func (suite *eatCommandTest) provideFoodAndCharacterHP() []struct {
 	food        *app.Item
 	initialHP   int
 	increasedHP int

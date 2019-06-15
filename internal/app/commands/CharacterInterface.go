@@ -3,6 +3,8 @@ package commands
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
+	"time"
 )
 
 type Character interface {
@@ -22,4 +24,9 @@ type Character interface {
 	FindItemWithFlag(flag itemFlag.Flag) *app.Item
 	DropItem(item *app.Item)
 	RestoreHealth()
+	Timer(timerName timer.Timer) (timeLeft time.Duration)
+	TimerActive(timerName timer.Timer) bool
+	SetTimer(timer timer.Timer, timeDuration time.Duration)
+	DropTimer(timer timer.Timer)
+	ResetTimer(timer timer.Timer)
 }

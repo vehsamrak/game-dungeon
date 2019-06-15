@@ -17,6 +17,7 @@ const (
 	WrongDirection         Error = "wrong direction"
 	LowHealth              Error = "health is too low"
 	FoodNotFound           Error = "food not found"
+	WaitState              Error = "wait before next command"
 )
 
 func (error Error) Error() string {
