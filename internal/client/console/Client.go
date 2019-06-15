@@ -10,12 +10,14 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 	"os"
 	"strings"
+	"time"
 )
 
 type Client struct {
 	character      *app.Character
 	commander      *commands.Commander
 	roomRepository app.RoomRepository
+	tickDuration   time.Duration
 }
 
 func (Client) Create() *Client {
@@ -30,17 +32,26 @@ func (Client) Create() *Client {
 	randomizer := random.Random{}.Create()
 	commander := commands.Commander{}.Create(roomRepository, randomizer)
 
-	return &Client{character: character, commander: commander, roomRepository: roomRepository}
+	return &Client{
+		character:      character,
+		commander:      commander,
+		roomRepository: roomRepository,
+		tickDuration:   1 * time.Second,
+	}
 }
 
 func (client *Client) Start() {
 	client.showEmptyLine()
 	client.outputNewline("Game started")
 	client.showEmptyLine()
-	client.ShowPrompt()
+
+	client.showPrompt()
 	client.showEmptyLine()
+
 	client.outputNewline("Enter command:")
 	client.showEmptyLine()
+
+	client.startTicker()
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -56,11 +67,11 @@ func (client *Client) Start() {
 				}
 				client.showEmptyLine()
 			default:
-				client.ExecuteCommand(input)
+				client.executeCommand(input)
 			}
 		}
 
-		client.ShowPrompt()
+		client.showPrompt()
 		client.showEmptyLine()
 	}
 
@@ -69,7 +80,7 @@ func (client *Client) Start() {
 	}
 }
 
-func (client *Client) ExecuteCommand(input string) {
+func (client *Client) executeCommand(input string) {
 	commandWithArguments := strings.Fields(input)
 	_, errors := client.commander.Execute(client.character, commandWithArguments)
 
@@ -78,7 +89,7 @@ func (client *Client) ExecuteCommand(input string) {
 	}
 }
 
-func (client *Client) ShowPrompt() {
+func (client *Client) showPrompt() {
 	room := client.roomRepository.FindByXYandZ(
 		client.character.X(),
 		client.character.Y(),
@@ -162,4 +173,20 @@ func (client *Client) output(message interface{}, isNewLine bool) {
 	}
 
 	fmt.Printf("%v%s", message, newLine)
+}
+func (client *Client) startTicker() {
+	ticker := time.NewTicker(client.tickDuration)
+
+	go func() {
+		for range ticker.C {
+			commandResult, _ := client.commander.Execute(client.character, []string{"rest"})
+
+			if !commandResult.HasErrors() {
+				client.outputNewline("HP increased")
+				client.showEmptyLine()
+				client.showPrompt()
+				client.showEmptyLine()
+			}
+		}
+	}()
 }

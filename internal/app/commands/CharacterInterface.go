@@ -29,4 +29,5 @@ type Character interface {
 	SetTimer(timer timer.Timer, timeDuration time.Duration)
 	DropTimer(timer timer.Timer)
 	ResetTimer(timer timer.Timer)
+	FullHealth() bool
 }

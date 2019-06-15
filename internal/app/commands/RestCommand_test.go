@@ -34,8 +34,10 @@ func (suite *restCommandTest) Test_Execute_character_WaitStateErrorOrHPIncreased
 		character := suite.createCharacterWithHPAndTimer(dataset.initialHP, dataset.lastRest)
 
 		result := command.Execute(character)
+		secondResult := command.Execute(character)
 
 		assert.Equal(suite.T(), dataset.error != "", result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.True(suite.T(), secondResult.HasError(gameError.WaitState))
 		if dataset.error != "" {
 			assert.True(suite.T(), result.HasError(dataset.error))
 		}
@@ -77,5 +79,6 @@ func (suite *restCommandTest) provideLastRestTimeAndInitialHPAndIncreasedHP() []
 		{1 * time.Second, 90, 90, gameError.WaitState},
 		{0 * time.Second, 90, 92, ""},
 		{-1 * time.Second, 90, 92, ""},
+		{-1 * time.Second, 100, 100, gameError.HealthFull},
 	}
 }

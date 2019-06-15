@@ -18,6 +18,7 @@ const (
 	LowHealth              Error = "health is too low"
 	FoodNotFound           Error = "food not found"
 	WaitState              Error = "wait before next command"
+	HealthFull             Error = "health already full"
 )
 
 func (error Error) Error() string {

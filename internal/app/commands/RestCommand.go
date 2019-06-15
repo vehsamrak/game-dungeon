@@ -33,11 +33,15 @@ func (command *RestCommand) Execute(character Character, arguments ...string) (r
 		return
 	}
 
-	if character.Health()+command.healthGain > character.MaxHealth() {
+	if character.FullHealth() {
+		result.AddError(gameError.HealthFull)
+	} else if character.Health()+command.healthGain > character.MaxHealth() {
 		character.RestoreHealth()
 	} else {
 		character.IncreaseHealth(command.healthGain)
 	}
+
+	character.SetTimer(timer.Rest, command.waitState)
 
 	return
 }

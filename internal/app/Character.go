@@ -143,3 +143,7 @@ func (character *Character) DropTimer(timer timer.Timer) {
 func (character *Character) ResetTimer(timer timer.Timer) {
 	character.timers[timer] = time.Now()
 }
+
+func (character *Character) FullHealth() bool {
+	return character.maxHealth == character.health
+}
