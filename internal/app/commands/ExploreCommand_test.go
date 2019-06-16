@@ -28,9 +28,10 @@ func (suite *exploreCommandTest) Test_Execute_characterCanFlyAndNoNearRooms_newR
 	for id, dataset := range suite.provideRoomBioms() {
 		character := suite.createCharacter()
 		character.Move(0, 0, dataset.z)
-		flyItem := app.Item{}.Create()
-		flyItem.AddFlag(itemFlag.CanFly)
-		character.AddItem(flyItem)
+		exploreItem := app.Item{}.Create()
+		exploreItem.AddFlag(itemFlag.CanFly)
+		exploreItem.AddFlag(itemFlag.CliffWalk)
+		character.AddItem(exploreItem)
 		roomRepository := &app.RoomMemoryRepository{}
 		roomRepository.AddRoom(app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest))
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
@@ -130,18 +131,18 @@ func (suite *exploreCommandTest) Test_Execute_characterInExplorableBiomAndNoNear
 	}
 }
 
-func (suite *exploreCommandTest) Test_Execute_characterCanExploreAir_airExploredAndCharacterMovedBackIfCantFly() {
+func (suite *exploreCommandTest) Test_Execute_characterCanExploreAirOrCliff_biomExploredAndCharacterMovedBackIfCantMoveThere() {
 	allBiomsAreCorrect := true
-	for id, dataset := range suite.provideFlyItem() {
+	for id, dataset := range suite.provideExploreItemAndBiom() {
 		character := suite.createCharacter()
-		character.Move(0, 0, 1)
+		character.Move(0, 0, dataset.z)
 		flyItem := app.Item{}.Create()
 		flyItem.AddFlag(dataset.itemFlag)
 		character.AddItem(flyItem)
 		roomRepository := &app.RoomMemoryRepository{}
 		initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Mountain)
 		roomRepository.AddRoom(initialRoom)
-		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(18))
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
 		commandDirection := direction.North
 		directionRoomX, directionRoomY, directionRoomZ := commandDirection.DiffXYZ()
 		targetRoomX := directionRoomX + character.X()
@@ -157,7 +158,7 @@ func (suite *exploreCommandTest) Test_Execute_characterCanExploreAir_airExplored
 		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		biomIsCorrect := assert.Equal(
 			suite.T(),
-			roomBiom.Air,
+			dataset.targetBiom,
 			roomAfterExploration.Biom(),
 			fmt.Sprintf("Dataset %v %#v", id, dataset),
 		)
@@ -175,6 +176,7 @@ func (suite *exploreCommandTest) Test_Execute_characterCanExploreAir_airExplored
 		}
 	}
 	if !allBiomsAreCorrect {
+		suite.showBiomNumbers(0, len(roomBiom.All())-1) // all bioms except air
 		suite.showBiomNumbers(1, len([]roomBiom.Biom{roomBiom.Air}))
 	}
 }
@@ -241,16 +243,24 @@ func (suite *exploreCommandTest) provideDisallowedDirections() []struct {
 	}
 }
 
-func (suite *exploreCommandTest) provideFlyItem() []struct {
-	itemFlag itemFlag.Flag
-	canFly   bool
+func (suite *exploreCommandTest) provideExploreItemAndBiom() []struct {
+	itemFlag   itemFlag.Flag
+	canFly     bool
+	z          int
+	randomSeed int64
+	targetBiom roomBiom.Biom
 } {
 	return []struct {
-		itemFlag itemFlag.Flag
-		canFly   bool
+		itemFlag   itemFlag.Flag
+		canFly     bool
+		z          int
+		randomSeed int64
+		targetBiom roomBiom.Biom
 	}{
-		{itemFlag.CanFly, true},
-		{itemFlag.MineTool, false},
+		{itemFlag.CanFly, true, 1, 18, roomBiom.Air},
+		{itemFlag.MineTool, false, 1, 18, roomBiom.Air},
+		{itemFlag.CliffWalk, true, 0, 78, roomBiom.Cliff},
+		{itemFlag.MineTool, false, 0, 78, roomBiom.Cliff},
 	}
 }
 

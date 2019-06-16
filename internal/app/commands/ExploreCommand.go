@@ -81,7 +81,7 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		room := app.Room{}.Create(x, y, z, biom)
 		room.AddFlags(biom.Flags())
 
-		if biom != roomBiom.Air || biom == roomBiom.Air && character.HasItemFlag(itemFlag.CanFly) {
+		if command.isBiomMovable(biom, character) {
 			character.Move(x, y, z)
 		}
 
@@ -89,6 +89,13 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 	}
 
 	return
+}
+
+func (command *ExploreCommand) isBiomMovable(biom roomBiom.Biom, character Character) bool {
+	airBiomIsMovable := biom != roomBiom.Air || biom == roomBiom.Air && character.HasItemFlag(itemFlag.CanFly)
+	cliffBiomIsMovable := biom != roomBiom.Cliff || biom == roomBiom.Cliff && character.HasItemFlag(itemFlag.CliffWalk)
+
+	return airBiomIsMovable && cliffBiomIsMovable
 }
 
 func (command *ExploreCommand) applicableBioms(
