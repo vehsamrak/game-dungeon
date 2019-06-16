@@ -71,10 +71,16 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 }
 
 func (command *ExploreCommand) generateRandomBiom() roomBiom.Biom {
-	bioms := roomBiom.All()
-	randomNumber := command.random.RandomNumber(len(bioms) - 1)
+	var biomProbabilities []roomBiom.Biom
+	for _, biom := range roomBiom.All() {
+		for i := 0; i < biom.ExploreProbability(); i++ {
+			biomProbabilities = append(biomProbabilities, biom)
+		}
+	}
 
-	return bioms[randomNumber]
+	randomNumber := command.random.RandomNumber(len(biomProbabilities) - 1)
+
+	return biomProbabilities[randomNumber]
 }
 
 func (command *ExploreCommand) checkInitialRoom(room *app.Room) (err gameError.Error) {
