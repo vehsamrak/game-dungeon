@@ -72,17 +72,30 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 	return
 }
 
-func (command *ExploreCommand) applicableBioms(character Character) []roomBiom.Biom {
+func (command *ExploreCommand) applicableBioms(character Character) (applicableBioms []roomBiom.Biom) {
 	bioms := roomBiom.All()
 	if character.Z() <= 0 {
 		for i, biom := range bioms {
 			if biom == roomBiom.Air {
-				bioms = append(bioms[:i], bioms[i+1:]...)
+				applicableBioms = append(bioms[:i], bioms[i+1:]...)
+			}
+		}
+	} else if character.Z() > 0 {
+		for _, biom := range bioms {
+			allowedBioms := map[roomBiom.Biom]bool{
+				roomBiom.Air:      true,
+				roomBiom.Mountain: true,
+				roomBiom.Cliff:    true,
+			}
+
+			_, biomIsAllowed := allowedBioms[biom]
+			if biomIsAllowed {
+				applicableBioms = append(applicableBioms, biom)
 			}
 		}
 	}
 
-	return bioms
+	return applicableBioms
 }
 
 func (command *ExploreCommand) selectRandomBiom(bioms []roomBiom.Biom) roomBiom.Biom {

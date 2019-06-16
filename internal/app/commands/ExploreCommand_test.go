@@ -57,7 +57,7 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 	}
 	if !allBiomsAreCorrect {
 		suite.showBiomNumbers(0, len(roomBiom.All())-1) // all bioms except air
-		suite.showBiomNumbers(1, len(roomBiom.All()))   // all bioms
+		suite.showBiomNumbers(1, len([]roomBiom.Biom{roomBiom.Air, roomBiom.Mountain, roomBiom.Cliff}))
 	}
 }
 
@@ -154,7 +154,9 @@ func (suite *exploreCommandTest) provideRoomBioms() []struct {
 		{108, roomBiom.Forest, 0},
 		{107, roomBiom.Mountain, 0},
 		{176, roomBiom.Swamp, 0},
-		{176, roomBiom.Air, 1},
+		{18, roomBiom.Air, 1},
+		{8, roomBiom.Mountain, 1},
+		{19, roomBiom.Cliff, 1},
 	}
 }
 
