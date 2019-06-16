@@ -79,6 +79,8 @@ func (command *MoveCommand) checkRoomMobility(
 		err = gameError.CantMoveInWater
 	} else if destinationRoom.Biom() == roomBiom.Air && !character.HasItemFlag(itemFlag.CanFly) {
 		err = gameError.RoomUnfordable
+	} else if destinationRoom.Biom() == roomBiom.Cliff && !character.HasItemFlag(itemFlag.CliffWalk) {
+		err = gameError.RoomUnfordable
 	} else if destinationRoom.HasFlag(roomFlag.Unfordable) {
 		err = gameError.RoomUnfordable
 	}

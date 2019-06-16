@@ -61,10 +61,10 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 } {
 	initialForest := app.Room{}.Create(0, 0, 0, roomBiom.Forest)
 	initialWater := app.Room{}.Create(0, 0, 0, roomBiom.Water)
-	// upForest := app.Room{}.Create(0, 0, 1, roomBiom.Forest)
 	northForest := app.Room{}.Create(0, 1, 0, roomBiom.Forest)
 	northWater := app.Room{}.Create(0, 1, 0, roomBiom.Water)
 	northAir := app.Room{}.Create(0, 1, 0, roomBiom.Air)
+	northCliff := app.Room{}.Create(0, 1, 0, roomBiom.Cliff)
 
 	getRoomRepositoryWithSingleRoom := func(x int, y int, z int, roomFlag roomFlag.Flag) app.RoomRepository {
 		room := app.Room{}.Create(x, y, z, roomBiom.Forest)
@@ -103,5 +103,7 @@ func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {
 		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialWater, northForest}), 0, 1, 0, "", ""},
 		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialForest, northAir}), 0, 0, 0, gameError.RoomUnfordable, ""},
 		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialForest, northAir}), 0, 1, 0, "", itemFlag.CanFly},
+		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialForest, northCliff}), 0, 0, 0, gameError.RoomUnfordable, ""},
+		{direction.North, getRoomRepositoryWithRooms([]*app.Room{initialForest, northCliff}), 0, 1, 0, "", itemFlag.CliffWalk},
 	}
 }

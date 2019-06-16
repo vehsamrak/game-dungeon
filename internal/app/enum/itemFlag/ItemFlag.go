@@ -3,13 +3,14 @@ package itemFlag
 type Flag string
 
 const (
-	CutTreeTool     Flag = "cut_tree"
-	FishTool        Flag = "fish_tool"
-	MineTool        Flag = "mine_tool"
-	ResourceWood    Flag = "resource_wood"
-	ResourceFish    Flag = "resource_fish"
-	ResourceOre     Flag = "resource_ore"
+	CutTreeTool     Flag = "cut tree"
+	FishTool        Flag = "fish tool"
+	MineTool        Flag = "mine tool"
+	ResourceWood    Flag = "resource wood"
+	ResourceFish    Flag = "resource fish"
+	ResourceOre     Flag = "resource ore"
 	Food            Flag = "food"
 	IgnoreWaitstate Flag = "ignore waitstate"
 	CanFly          Flag = "can fly"
+	CliffWalk       Flag = "cliff walk"
 )
