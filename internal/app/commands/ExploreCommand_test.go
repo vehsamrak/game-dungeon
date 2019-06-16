@@ -24,13 +24,17 @@ type exploreCommandTest struct {
 
 func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithBiomAndFlagsAndCharacterMovedToNewRoom() {
 	allBiomsAreCorrect := true
-	for id, dataset := range suite.provideRoomBiomAndFlags() {
+	for id, dataset := range suite.provideRoomBioms() {
 		character := suite.createCharacter()
+		character.Move(0, 0, dataset.z)
 		roomRepository := &app.RoomMemoryRepository{}
 		roomRepository.AddRoom(app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest))
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
 		commandDirection := direction.North
-		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+		directionRoomX, directionRoomY, directionRoomZ := commandDirection.DiffXYZ()
+		targetRoomX := directionRoomX + character.X()
+		targetRoomY := directionRoomY + character.Y()
+		targetRoomZ := directionRoomZ + character.Z()
 		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 		result := command.Execute(character, commandDirection.String())
@@ -48,13 +52,12 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		if !biomIsCorrect {
 			allBiomsAreCorrect = false
 		}
-		suite.assertRoomHasFlags(dataset.roomFlags, roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), targetRoomX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), targetRoomY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 	}
-
 	if !allBiomsAreCorrect {
-		suite.showBiomNumbers(int64(len(roomBiom.All()) * 10))
+		suite.showBiomNumbers(0, len(roomBiom.All())-1) // all bioms except air
+		suite.showBiomNumbers(1, len(roomBiom.All()))   // all bioms
 	}
 }
 
@@ -130,27 +133,28 @@ func (suite *exploreCommandTest) createRandomWithSeed(seed int64) *random.Random
 	return randomizer
 }
 
-func (suite *exploreCommandTest) provideRoomBiomAndFlags() []struct {
+func (suite *exploreCommandTest) provideRoomBioms() []struct {
 	randomSeed int64
 	biom       roomBiom.Biom
-	roomFlags  []roomFlag.Flag
+	z          int
 } {
 	return []struct {
 		randomSeed int64
 		biom       roomBiom.Biom
-		roomFlags  []roomFlag.Flag
+		z          int
 	}{
-		{172, roomBiom.Swamp, []roomFlag.Flag{}},
-		{180, roomBiom.Hill, []roomFlag.Flag{}},
-		{168, roomBiom.Water, []roomFlag.Flag{roomFlag.FishProbability}},
-		{76, roomBiom.Cave, []roomFlag.Flag{roomFlag.OreProbability, roomFlag.GemProbability}},
-		{174, roomBiom.Plain, []roomFlag.Flag{}},
-		{161, roomBiom.Cliff, []roomFlag.Flag{roomFlag.Unfordable}},
-		{170, roomBiom.Sand, []roomFlag.Flag{roomFlag.GemProbability}},
-		{181, roomBiom.Town, []roomFlag.Flag{}},
-		{176, roomBiom.Air, []roomFlag.Flag{roomFlag.Unfordable}},
-		{179, roomBiom.Forest, []roomFlag.Flag{roomFlag.Trees}},
-		{144, roomBiom.Mountain, []roomFlag.Flag{roomFlag.CaveProbability}},
+		{110, roomBiom.Swamp, 0},
+		{113, roomBiom.Hill, 0},
+		{89, roomBiom.Water, 0},
+		{115, roomBiom.Cave, 0},
+		{104, roomBiom.Plain, 0},
+		{78, roomBiom.Cliff, 0},
+		{114, roomBiom.Sand, 0},
+		{79, roomBiom.Town, 0},
+		{108, roomBiom.Forest, 0},
+		{107, roomBiom.Mountain, 0},
+		{176, roomBiom.Swamp, 0},
+		{176, roomBiom.Air, 1},
 	}
 }
 
@@ -178,23 +182,27 @@ func (suite *exploreCommandTest) provideDisallowedDirections() []struct {
 	}
 }
 
-func (suite *exploreCommandTest) showBiomNumbers(iterationsCount int64) {
+func (suite *exploreCommandTest) showBiomNumbers(z int, biomsCount int) {
 	biomSeeds := make(map[roomBiom.Biom]int64)
 	var i int64
-	for i = 0; len(biomSeeds) < len(roomBiom.All()); i++ {
+	for i = 0; len(biomSeeds) < biomsCount; i++ {
 		character := suite.createCharacter()
+		character.Move(character.X(), character.Y(), z)
 		room := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest)
 		roomRepository := app.RoomMemoryRepository{}.Create([]*app.Room{room})
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(i))
 		commandDirection := direction.North
 		command.Execute(character, commandDirection.String())
-		targetRoomX, targetRoomY, targetRoomZ := commandDirection.DiffXYZ()
+		directionX, directionY, directionZ := commandDirection.DiffXYZ()
+		targetRoomX := directionX
+		targetRoomY := directionY
+		targetRoomZ := directionZ + z
 		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 		biomSeeds[roomAfterExploration.Biom()] = i
 	}
 
 	for biom, iterator := range biomSeeds {
-		fmt.Printf("%v %v\n", iterator, biom)
+		fmt.Printf("%v %v %v\n", iterator, biom, z)
 	}
 }
 

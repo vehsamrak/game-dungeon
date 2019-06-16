@@ -58,9 +58,11 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		y := character.Y() + yDiff
 		z := character.Z() + zDiff
 
-		biom := command.generateRandomBiom()
+		bioms := command.applicableBioms(character)
+		biom := command.selectRandomBiom(bioms)
+
 		room := app.Room{}.Create(x, y, z, biom)
-		room.AddFlags(room.Biom().Flags())
+		room.AddFlags(biom.Flags())
 
 		character.Move(x, y, z)
 
@@ -70,9 +72,22 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 	return
 }
 
-func (command *ExploreCommand) generateRandomBiom() roomBiom.Biom {
+func (command *ExploreCommand) applicableBioms(character Character) []roomBiom.Biom {
+	bioms := roomBiom.All()
+	if character.Z() <= 0 {
+		for i, biom := range bioms {
+			if biom == roomBiom.Air {
+				bioms = append(bioms[:i], bioms[i+1:]...)
+			}
+		}
+	}
+
+	return bioms
+}
+
+func (command *ExploreCommand) selectRandomBiom(bioms []roomBiom.Biom) roomBiom.Biom {
 	var biomProbabilities []roomBiom.Biom
-	for _, biom := range roomBiom.All() {
+	for _, biom := range bioms {
 		for i := 0; i < biom.ExploreProbability(); i++ {
 			biomProbabilities = append(biomProbabilities, biom)
 		}
