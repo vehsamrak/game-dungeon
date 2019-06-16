@@ -27,17 +27,21 @@ func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndRoomRepositor
 		character := suite.getCharacter()
 
 		result := command.Execute(character, dataset.direction.String())
+		secondResult := command.Execute(character, dataset.direction.String())
 
 		if dataset.error != "" {
 			assert.True(suite.T(), result.HasError(dataset.error), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		}
 		assert.Equal(suite.T(), dataset.expectedCharacterX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), dataset.expectedCharacterY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.True(suite.T(), secondResult.HasError(gameError.WaitState), fmt.Sprintf("Dataset %v %#v", id, dataset))
 	}
 }
 
 func (suite *moveCommandTest) getCharacter() commands.Character {
-	return &app.Character{}
+	character := app.Character{}.Create("")
+
+	return character
 }
 
 func (suite *moveCommandTest) provideCharacterDirectionsAndRooms() []struct {

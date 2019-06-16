@@ -125,7 +125,7 @@ func (suite *exploreCommandTest) Test_Execute_characterInExplorableBiomAndNoNear
 }
 
 func (suite *exploreCommandTest) createCharacter() commands.Character {
-	return &app.Character{}
+	return app.Character{}.Create("")
 }
 
 func (suite *exploreCommandTest) createRandomWithSeed(seed int64) *random.Random {
