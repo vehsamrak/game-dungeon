@@ -74,6 +74,7 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 	result := command.Execute(character, commandDirection.String())
+	secondResult := command.Execute(character, commandDirection.String())
 
 	roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 	assert.False(suite.T(), result.HasErrors())
@@ -81,6 +82,7 @@ func (suite *exploreCommandTest) Test_Execute_characterTryToExploreAlreadyExiste
 	assert.NotNil(suite.T(), roomAfterExploration)
 	assert.Equal(suite.T(), targetRoomX, character.X())
 	assert.Equal(suite.T(), targetRoomY, character.Y())
+	assert.True(suite.T(), secondResult.HasError(gameError.WaitState))
 }
 
 func (suite *exploreCommandTest) Test_Execute_characterInDisallowedFromExploreBiomAndNoNearRooms_wrongBiom() {

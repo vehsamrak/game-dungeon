@@ -5,20 +5,29 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
+	"time"
 )
 
 type ExploreCommand struct {
 	roomRepository app.RoomRepository
 	random         *random.Random
+	waitState      time.Duration
+	healthPrice    int
 }
 
 func (command *ExploreCommand) HealthPrice() int {
-	return 3
+	return command.healthPrice
 }
 
 func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *random.Random) *ExploreCommand {
-	return &ExploreCommand{roomRepository: roomRepository, random: random}
+	return &ExploreCommand{
+		roomRepository: roomRepository,
+		random:         random,
+		waitState:      10 * time.Second,
+		healthPrice:    3,
+	}
 }
 
 func (command *ExploreCommand) Execute(character Character, arguments ...string) (result CommandResult) {
@@ -52,6 +61,13 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 
 	if result.HasError(gameError.RoomNotFound) {
 		result.RemoveError(gameError.RoomNotFound)
+
+		if character.TimerActive(timer.Explore) {
+			result.AddError(gameError.WaitState)
+			return
+		}
+
+		character.SetTimer(timer.Explore, command.waitState)
 
 		xDiff, yDiff, zDiff := exploreDirection.DiffXYZ()
 		x := character.X() + xDiff
