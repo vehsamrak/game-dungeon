@@ -138,6 +138,10 @@ func (command *MineCommand) createCave(
 	y = character.Y() + yDiff
 	z = character.Z() + zDiff
 
+	if z > 0 {
+		err = gameError.CaveNotFound
+	}
+
 	alreadyExistingRoom := command.roomRepository.FindByXYandZ(x, y, z)
 	if alreadyExistingRoom != nil {
 		err = gameError.RoomAlreadyExist
