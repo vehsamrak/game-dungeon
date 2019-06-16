@@ -21,12 +21,14 @@ type Client struct {
 }
 
 func (Client) Create() *Client {
-	roomRepository := app.RoomMemoryRepository{}.Create(nil)
 	character := app.Character{}.Create("console")
 	universalTool := app.Item{}.Create()
 	universalTool.AddFlag(itemFlag.MineTool)
 	universalTool.AddFlag(itemFlag.FishTool)
+	universalTool.AddFlag(itemFlag.IgnoreWaitstate)
 	character.AddItem(universalTool)
+
+	roomRepository := app.RoomMemoryRepository{}.Create(nil)
 	randomizer := random.Random{}.Create()
 	commander := commands.Commander{}.Create(roomRepository, randomizer)
 

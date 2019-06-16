@@ -129,7 +129,7 @@ func (character *Character) Timer(timerName timer.Timer) (timeLeft time.Duration
 }
 
 func (character *Character) TimerActive(timerName timer.Timer) bool {
-	return character.Timer(timerName) > 0
+	return character.HasItemFlag(itemFlag.IgnoreWaitstate) == false && character.Timer(timerName) > 0
 }
 
 func (character *Character) SetTimer(timer timer.Timer, timeDuration time.Duration) {
