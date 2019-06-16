@@ -42,12 +42,12 @@ func (command *MoveCommand) Execute(character Character, arguments ...string) (r
 		return
 	}
 
-	if character.TimerActive(timer.Rest) {
+	if character.HasActiveTimers() {
 		result.AddError(gameError.WaitState)
 		return
 	}
 
-	character.SetTimer(timer.Rest, command.waitState)
+	character.SetTimer(timer.Move, command.waitState)
 
 	xDiff, yDiff, zDiff := moveDirection.DiffXYZ()
 	x := character.X() + xDiff

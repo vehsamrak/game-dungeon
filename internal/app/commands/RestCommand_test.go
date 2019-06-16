@@ -7,9 +7,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
 	"testing"
-	"time"
 )
 
 func TestRestCommand(test *testing.T) {
@@ -31,13 +29,11 @@ func (suite *restCommandTest) Test_HealthPrice_noParameters_zeroPriceReturned() 
 func (suite *restCommandTest) Test_Execute_character_WaitStateErrorOrHPIncreased() {
 	command := commands.RestCommand{}.Create()
 	for id, dataset := range suite.provideLastRestTimeAndInitialHPAndIncreasedHP() {
-		character := suite.createCharacterWithHPAndTimer(dataset.initialHP, dataset.lastRest)
+		character := suite.createCharacterWithHP(dataset.initialHP)
 
 		result := command.Execute(character)
-		secondResult := command.Execute(character)
 
 		assert.Equal(suite.T(), dataset.error != "", result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
-		assert.True(suite.T(), secondResult.HasError(gameError.WaitState))
 		if dataset.error != "" {
 			assert.True(suite.T(), result.HasError(dataset.error))
 		}
@@ -55,30 +51,25 @@ func (suite *restCommandTest) Test_Execute_character_WaitStateErrorOrHPIncreased
 	}
 }
 
-func (suite *restCommandTest) createCharacterWithHPAndTimer(hp int, lastRest time.Duration) *app.Character {
+func (suite *restCommandTest) createCharacterWithHP(hp int) *app.Character {
 	character := app.Character{}.Create("")
 	character.LowerHealth(character.MaxHealth())
 	character.IncreaseHealth(hp)
-	character.SetTimer(timer.Rest, lastRest)
 
 	return character
 }
 
 func (suite *restCommandTest) provideLastRestTimeAndInitialHPAndIncreasedHP() []struct {
-	lastRest    time.Duration
 	initialHP   int
 	increasedHP int
 	error       gameError.Error
 } {
 	return []struct {
-		lastRest    time.Duration
 		initialHP   int
 		increasedHP int
 		error       gameError.Error
 	}{
-		{1 * time.Second, 90, 90, gameError.WaitState},
-		{0 * time.Second, 90, 92, ""},
-		{-1 * time.Second, 90, 92, ""},
-		{-1 * time.Second, 100, 100, gameError.HealthFull},
+		{90, 92, ""},
+		{100, 100, gameError.HealthFull},
 	}
 }

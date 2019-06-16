@@ -26,6 +26,7 @@ type Character interface {
 	RestoreHealth()
 	Timer(timerName timer.Timer) (timeLeft time.Duration)
 	TimerActive(timerName timer.Timer) bool
+	HasActiveTimers() bool
 	SetTimer(timer timer.Timer, timeDuration time.Duration)
 	DropTimer(timer timer.Timer)
 	ResetTimer(timer timer.Timer)

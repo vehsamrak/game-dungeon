@@ -24,7 +24,6 @@ func (commander *Commander) Commands() map[string]GameCommand {
 		"mine":    MineCommand{}.Create(commander.roomRepository, commander.random),
 		"fish":    FishCommand{}.Create(commander.roomRepository, commander.random),
 		"eat":     EatCommand{}.Create(),
-		"rest":    RestCommand{}.Create(),
 	}
 }
 

@@ -40,7 +40,7 @@ func (command *FishCommand) Execute(character Character, arguments ...string) (r
 		return
 	}
 
-	if character.TimerActive(timer.GatherResource) {
+	if character.HasActiveTimers() {
 		result.AddError(gameError.WaitState)
 		return
 	}

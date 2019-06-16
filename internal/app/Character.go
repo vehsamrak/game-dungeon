@@ -144,6 +144,18 @@ func (character *Character) ResetTimer(timer timer.Timer) {
 	character.timers[timer] = time.Now()
 }
 
+func (character *Character) HasActiveTimers() (hasActiveTimers bool) {
+	for timerToCheck := range character.timers {
+		if character.TimerActive(timerToCheck) {
+			hasActiveTimers = true
+		} else {
+			delete(character.timers, timerToCheck)
+		}
+	}
+
+	return hasActiveTimers
+}
+
 func (character *Character) FullHealth() bool {
 	return character.maxHealth == character.health
 }

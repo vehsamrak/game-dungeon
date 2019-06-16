@@ -23,12 +23,10 @@ type Client struct {
 func (Client) Create() *Client {
 	roomRepository := app.RoomMemoryRepository{}.Create(nil)
 	character := app.Character{}.Create("console")
-	pick := app.Item{}.Create()
-	pick.AddFlag(itemFlag.MineTool)
-	character.AddItem(pick)
-	fishingPole := app.Item{}.Create()
-	fishingPole.AddFlag(itemFlag.FishTool)
-	character.AddItem(fishingPole)
+	universalTool := app.Item{}.Create()
+	universalTool.AddFlag(itemFlag.MineTool)
+	universalTool.AddFlag(itemFlag.FishTool)
+	character.AddItem(universalTool)
 	randomizer := random.Random{}.Create()
 	commander := commands.Commander{}.Create(roomRepository, randomizer)
 
@@ -178,8 +176,10 @@ func (client *Client) startTicker() {
 	ticker := time.NewTicker(client.tickDuration)
 
 	go func() {
+		restCommand := commands.RestCommand{}.Create()
+
 		for range ticker.C {
-			commandResult, _ := client.commander.Execute(client.character, []string{"rest"})
+			commandResult := restCommand.Execute(client.character)
 
 			if !commandResult.HasErrors() {
 				client.outputNewline("HP increased")

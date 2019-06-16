@@ -3,7 +3,6 @@ package commands
 import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
-	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
 	"time"
 )
 
@@ -28,7 +27,7 @@ func (command RestCommand) Create() *RestCommand {
 func (command *RestCommand) Execute(character Character, arguments ...string) (result CommandResult) {
 	result = commandResult{}.Create()
 
-	if character.TimerActive(timer.Rest) {
+	if character.HasActiveTimers() {
 		result.AddError(gameError.WaitState)
 		return
 	}
@@ -40,8 +39,6 @@ func (command *RestCommand) Execute(character Character, arguments ...string) (r
 	} else {
 		character.IncreaseHealth(command.healthGain)
 	}
-
-	character.SetTimer(timer.Rest, command.waitState)
 
 	return
 }
