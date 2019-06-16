@@ -58,7 +58,7 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		y := character.Y() + yDiff
 		z := character.Z() + zDiff
 
-		bioms := command.applicableBioms(character)
+		bioms := command.applicableBioms(character, x, y, z)
 		biom := command.selectRandomBiom(bioms)
 
 		room := app.Room{}.Create(x, y, z, biom)
@@ -72,7 +72,12 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 	return
 }
 
-func (command *ExploreCommand) applicableBioms(character Character) (applicableBioms []roomBiom.Biom) {
+func (command *ExploreCommand) applicableBioms(
+	character Character,
+	x int,
+	y int,
+	z int,
+) (applicableBioms []roomBiom.Biom) {
 	bioms := roomBiom.All()
 	if character.Z() <= 0 {
 		for i, biom := range bioms {
@@ -90,7 +95,10 @@ func (command *ExploreCommand) applicableBioms(character Character) (applicableB
 
 			_, biomIsAllowed := allowedBioms[biom]
 			if biomIsAllowed {
-				applicableBioms = append(applicableBioms, biom)
+				bottomRoom := command.roomRepository.FindByXYandZ(x, y, z-1)
+				if biom == roomBiom.Air || bottomRoom != nil && bottomRoom.Biom() == roomBiom.Mountain {
+					applicableBioms = append(applicableBioms, biom)
+				}
 			}
 		}
 	}

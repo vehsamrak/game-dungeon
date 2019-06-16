@@ -35,6 +35,7 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		targetRoomX := directionRoomX + character.X()
 		targetRoomY := directionRoomY + character.Y()
 		targetRoomZ := directionRoomZ + character.Z()
+		roomRepository.AddRoom(app.Room{}.Create(targetRoomX, targetRoomY, targetRoomZ-1, roomBiom.Mountain))
 		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
 
 		result := command.Execute(character, commandDirection.String())
@@ -54,6 +55,7 @@ func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCre
 		}
 		assert.Equal(suite.T(), targetRoomX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 		assert.Equal(suite.T(), targetRoomY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.Equal(suite.T(), targetRoomZ, character.Z(), fmt.Sprintf("Dataset %v %#v", id, dataset))
 	}
 	if !allBiomsAreCorrect {
 		suite.showBiomNumbers(0, len(roomBiom.All())-1) // all bioms except air
