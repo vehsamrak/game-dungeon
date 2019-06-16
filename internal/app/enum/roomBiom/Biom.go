@@ -57,8 +57,6 @@ func (biom Biom) ExploreProbability() (probabilityPercentage int) {
 		Plain:    15,
 		Hill:     15,
 		Forest:   15,
-		Water:    10,
-		Air:      10,
 		Swamp:    7,
 		Sand:     5,
 		Mountain: 5,

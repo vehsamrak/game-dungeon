@@ -34,7 +34,7 @@ func (Client) Create() *Client {
 		character:      character,
 		commander:      commander,
 		roomRepository: roomRepository,
-		tickDuration:   1 * time.Second,
+		tickDuration:   5 * time.Second,
 	}
 }
 

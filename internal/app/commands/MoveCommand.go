@@ -19,7 +19,7 @@ type MoveCommand struct {
 func (command MoveCommand) Create(roomRepository app.RoomRepository) *MoveCommand {
 	return &MoveCommand{
 		roomRepository: roomRepository,
-		waitState:      5 * time.Second,
+		waitState:      2 * time.Second,
 		healthPrice:    1,
 	}
 }

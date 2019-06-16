@@ -25,7 +25,7 @@ func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *
 	return &ExploreCommand{
 		roomRepository: roomRepository,
 		random:         random,
-		waitState:      10 * time.Second,
+		waitState:      3 * time.Second,
 		healthPrice:    3,
 	}
 }
