@@ -8,6 +8,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/commands"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
@@ -22,11 +23,14 @@ type exploreCommandTest struct {
 	suite.Suite
 }
 
-func (suite *exploreCommandTest) Test_Execute_characterAndNoNearRooms_newRoomCreatedWithBiomAndFlagsAndCharacterMovedToNewRoom() {
+func (suite *exploreCommandTest) Test_Execute_characterCanFlyAndNoNearRooms_newRoomCreatedWithBiomAndCharacterMovedToNewRoom() {
 	allBiomsAreCorrect := true
 	for id, dataset := range suite.provideRoomBioms() {
 		character := suite.createCharacter()
 		character.Move(0, 0, dataset.z)
+		flyItem := app.Item{}.Create()
+		flyItem.AddFlag(itemFlag.CanFly)
+		character.AddItem(flyItem)
 		roomRepository := &app.RoomMemoryRepository{}
 		roomRepository.AddRoom(app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Forest))
 		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(dataset.randomSeed))
@@ -126,6 +130,55 @@ func (suite *exploreCommandTest) Test_Execute_characterInExplorableBiomAndNoNear
 	}
 }
 
+func (suite *exploreCommandTest) Test_Execute_characterCanExploreAir_airExploredAndCharacterMovedBackIfCantFly() {
+	allBiomsAreCorrect := true
+	for id, dataset := range suite.provideFlyItem() {
+		character := suite.createCharacter()
+		character.Move(0, 0, 1)
+		flyItem := app.Item{}.Create()
+		flyItem.AddFlag(dataset.itemFlag)
+		character.AddItem(flyItem)
+		roomRepository := &app.RoomMemoryRepository{}
+		initialRoom := app.Room{}.Create(character.X(), character.Y(), character.Z(), roomBiom.Mountain)
+		roomRepository.AddRoom(initialRoom)
+		command := commands.ExploreCommand{}.Create(roomRepository, suite.createRandomWithSeed(18))
+		commandDirection := direction.North
+		directionRoomX, directionRoomY, directionRoomZ := commandDirection.DiffXYZ()
+		targetRoomX := directionRoomX + character.X()
+		targetRoomY := directionRoomY + character.Y()
+		targetRoomZ := directionRoomZ + character.Z()
+		roomBeforeExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
+
+		result := command.Execute(character, commandDirection.String())
+
+		roomAfterExploration := roomRepository.FindByXYandZ(targetRoomX, targetRoomY, targetRoomZ)
+		assert.False(suite.T(), result.HasErrors(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.Nil(suite.T(), roomBeforeExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
+		assert.NotNil(suite.T(), roomAfterExploration, fmt.Sprintf("Dataset %v %#v", id, dataset))
+		biomIsCorrect := assert.Equal(
+			suite.T(),
+			roomBiom.Air,
+			roomAfterExploration.Biom(),
+			fmt.Sprintf("Dataset %v %#v", id, dataset),
+		)
+		if !biomIsCorrect {
+			allBiomsAreCorrect = false
+		}
+		if dataset.canFly {
+			assert.Equal(suite.T(), targetRoomX, character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+			assert.Equal(suite.T(), targetRoomY, character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+			assert.Equal(suite.T(), targetRoomZ, character.Z(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		} else {
+			assert.Equal(suite.T(), initialRoom.X(), character.X(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+			assert.Equal(suite.T(), initialRoom.Y(), character.Y(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+			assert.Equal(suite.T(), initialRoom.Z(), character.Z(), fmt.Sprintf("Dataset %v %#v", id, dataset))
+		}
+	}
+	if !allBiomsAreCorrect {
+		suite.showBiomNumbers(1, len([]roomBiom.Biom{roomBiom.Air}))
+	}
+}
+
 func (suite *exploreCommandTest) createCharacter() commands.Character {
 	return app.Character{}.Create("")
 }
@@ -185,6 +238,19 @@ func (suite *exploreCommandTest) provideDisallowedDirections() []struct {
 	}{
 		{direction.Up},
 		{direction.Down},
+	}
+}
+
+func (suite *exploreCommandTest) provideFlyItem() []struct {
+	itemFlag itemFlag.Flag
+	canFly   bool
+} {
+	return []struct {
+		itemFlag itemFlag.Flag
+		canFly   bool
+	}{
+		{itemFlag.CanFly, true},
+		{itemFlag.MineTool, false},
 	}
 }
 

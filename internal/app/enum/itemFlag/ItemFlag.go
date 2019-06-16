@@ -11,4 +11,5 @@ const (
 	ResourceOre     Flag = "resource_ore"
 	Food            Flag = "food"
 	IgnoreWaitstate Flag = "ignore waitstate"
+	CanFly          Flag = "can fly"
 )

@@ -4,6 +4,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/direction"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/gameError"
+	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/roomBiom"
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/timer"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
@@ -80,7 +81,9 @@ func (command *ExploreCommand) Execute(character Character, arguments ...string)
 		room := app.Room{}.Create(x, y, z, biom)
 		room.AddFlags(biom.Flags())
 
-		character.Move(x, y, z)
+		if biom != roomBiom.Air || biom == roomBiom.Air && character.HasItemFlag(itemFlag.CanFly) {
+			character.Move(x, y, z)
+		}
 
 		command.roomRepository.AddRoom(room)
 	}
