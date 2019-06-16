@@ -51,3 +51,27 @@ func (biom Biom) Flags() []roomFlag.Flag {
 func (biom Biom) String() string {
 	return string(biom)
 }
+
+func (biom Biom) ExploreProbability() (probabilityPercentage int) {
+	probabilityMap := map[Biom]int{
+		Plain:    15,
+		Hill:     15,
+		Forest:   15,
+		Water:    10,
+		Air:      10,
+		Swamp:    7,
+		Sand:     5,
+		Mountain: 5,
+		Cave:     2,
+		Cliff:    1,
+		Town:     1,
+	}
+
+	probabilityPercentage, ok := probabilityMap[biom]
+
+	if !ok {
+		return 10
+	}
+
+	return
+}
