@@ -118,8 +118,8 @@ func (suite *fishCommandTest) createCharacterWithTool() *app.Character {
 	return character
 }
 
-func (suite *fishCommandTest) createRandomWithSeed(seed int64) *random.Random {
-	randomizer := random.Random{}.Create()
+func (suite *fishCommandTest) createRandomWithSeed(seed int64) *random.Randomizer {
+	randomizer := random.Randomizer{}.Create()
 	randomizer.Seed(seed)
 
 	return randomizer

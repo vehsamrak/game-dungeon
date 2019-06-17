@@ -29,7 +29,7 @@ func (Client) Create() *Client {
 	character.AddItem(universalTool)
 
 	roomRepository := app.RoomMemoryRepository{}.Create(nil)
-	randomizer := random.Random{}.Create()
+	randomizer := random.Randomizer{}.Create()
 	commander := commands.Commander{}.Create(roomRepository, randomizer)
 
 	return &Client{

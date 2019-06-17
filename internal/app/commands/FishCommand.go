@@ -13,7 +13,7 @@ import (
 
 type FishCommand struct {
 	roomRepository app.RoomRepository
-	random         *random.Random
+	random         *random.Randomizer
 	waitState      time.Duration
 	healthPrice    int
 }
@@ -22,7 +22,7 @@ func (command *FishCommand) HealthPrice() int {
 	return command.healthPrice
 }
 
-func (command FishCommand) Create(roomRepository app.RoomRepository, random *random.Random) *FishCommand {
+func (command FishCommand) Create(roomRepository app.RoomRepository, random *random.Randomizer) *FishCommand {
 	return &FishCommand{
 		roomRepository: roomRepository,
 		random:         random,

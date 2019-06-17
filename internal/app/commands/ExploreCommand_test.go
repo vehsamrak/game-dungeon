@@ -185,8 +185,8 @@ func (suite *exploreCommandTest) createCharacter() commands.Character {
 	return app.Character{}.Create("")
 }
 
-func (suite *exploreCommandTest) createRandomWithSeed(seed int64) *random.Random {
-	randomizer := random.Random{}.Create()
+func (suite *exploreCommandTest) createRandomWithSeed(seed int64) *random.Randomizer {
+	randomizer := random.Randomizer{}.Create()
 	randomizer.Seed(seed)
 
 	return randomizer

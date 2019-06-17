@@ -13,7 +13,7 @@ import (
 
 type ExploreCommand struct {
 	roomRepository app.RoomRepository
-	random         *random.Random
+	random         *random.Randomizer
 	waitState      time.Duration
 	healthPrice    int
 }
@@ -22,7 +22,7 @@ func (command *ExploreCommand) HealthPrice() int {
 	return command.healthPrice
 }
 
-func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *random.Random) *ExploreCommand {
+func (command ExploreCommand) Create(roomRepository app.RoomRepository, random *random.Randomizer) *ExploreCommand {
 	return &ExploreCommand{
 		roomRepository: roomRepository,
 		random:         random,

@@ -9,10 +9,10 @@ import (
 
 type Commander struct {
 	roomRepository app.RoomRepository
-	random         *random.Random
+	random         *random.Randomizer
 }
 
-func (commander Commander) Create(roomRepository app.RoomRepository, random *random.Random) *Commander {
+func (commander Commander) Create(roomRepository app.RoomRepository, random *random.Randomizer) *Commander {
 	return &Commander{roomRepository: roomRepository, random: random}
 }
 

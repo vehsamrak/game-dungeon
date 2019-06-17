@@ -5,19 +5,19 @@ import (
 	"time"
 )
 
-type Random struct {
+type Randomizer struct {
 	random *rand.Rand
 }
 
-func (random Random) Create() *Random {
-	return &Random{random: rand.New(rand.NewSource(time.Now().UnixNano()))}
+func (random Randomizer) Create() *Randomizer {
+	return &Randomizer{random: rand.New(rand.NewSource(time.Now().UnixNano()))}
 }
 
-func (random *Random) Seed(seed int64) {
+func (random *Randomizer) Seed(seed int64) {
 	random.random.Seed(seed)
 }
 
-func (random *Random) RandomNumber(max int) int {
+func (random *Randomizer) RandomNumber(max int) int {
 	randomNumber := random.random.Intn(max + 1)
 
 	if randomNumber > max {
@@ -27,6 +27,6 @@ func (random *Random) RandomNumber(max int) int {
 	return randomNumber
 }
 
-func (random *Random) RandomBoolean() bool {
+func (random *Randomizer) RandomBoolean() bool {
 	return random.RandomNumber(1) == 1
 }

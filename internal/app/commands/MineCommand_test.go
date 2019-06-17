@@ -284,8 +284,8 @@ func (suite *mineCommandTest) createCharacterWithTool() *app.Character {
 	return character
 }
 
-func (suite *mineCommandTest) createRandomWithSeed(seed int64) *random.Random {
-	randomizer := random.Random{}.Create()
+func (suite *mineCommandTest) createRandomWithSeed(seed int64) *random.Randomizer {
+	randomizer := random.Randomizer{}.Create()
 	randomizer.Seed(seed)
 
 	return randomizer

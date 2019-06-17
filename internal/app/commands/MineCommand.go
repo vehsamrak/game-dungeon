@@ -14,7 +14,7 @@ import (
 
 type MineCommand struct {
 	roomRepository app.RoomRepository
-	random         *random.Random
+	random         *random.Randomizer
 	waitState      time.Duration
 	healthPrice    int
 }
@@ -23,7 +23,7 @@ func (command *MineCommand) HealthPrice() int {
 	return command.healthPrice
 }
 
-func (command MineCommand) Create(roomRepository app.RoomRepository, random *random.Random) *MineCommand {
+func (command MineCommand) Create(roomRepository app.RoomRepository, random *random.Randomizer) *MineCommand {
 	return &MineCommand{
 		roomRepository: roomRepository,
 		random:         random,
