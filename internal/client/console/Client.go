@@ -25,7 +25,6 @@ func (Client) Create() *Client {
 	universalTool := app.Item{}.Create()
 	universalTool.AddFlag(itemFlag.MineTool)
 	universalTool.AddFlag(itemFlag.FishTool)
-	universalTool.AddFlag(itemFlag.IgnoreWaitstate)
 	character.AddItem(universalTool)
 
 	roomRepository := app.RoomMemoryRepository{}.Create(nil)
