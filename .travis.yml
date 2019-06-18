@@ -27,6 +27,10 @@ script:
 # run integration tests
 - go test -v ./test/integration/...
 
+# build binaries
+- GOOS=windows GOARCH=amd64 go build
+- GOOS=linux GOARCH=amd64 go build
+
 after_success:
 # publish coverage report
 - bash <(curl -s https://codecov.io/bash)
