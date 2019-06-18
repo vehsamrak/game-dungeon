@@ -49,4 +49,4 @@ deploy:
   on:
     repo: Vehsamrak/game-dungeon
     tags: true
-    condition: $LATEST = true
+    condition: $BUILD = true
