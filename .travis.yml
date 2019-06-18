@@ -3,13 +3,17 @@ language: go
 sudo: required
 
 matrix:
+  include:
+  - language: go
+    go: 1.12.x
+    env: BUILD=true
+  - language: go
+    go: 1.x
+  - language: go
+    go: master
   allow_failures:
   - go: 1.x
   - go: master
-- go: 1.x
-- go: master
-- go: 1.12.x
-  env: BUILD=true
 
 before_install:
 # rename package name for imports
