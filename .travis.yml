@@ -47,6 +47,6 @@ deploy:
   - game
   - game.exe
   on:
-    repo: vehsamrak/game-dungeon
+    repo: Vehsamrak/game-dungeon
     tags: true
     condition: $LATEST = true
