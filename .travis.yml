@@ -33,8 +33,6 @@ script:
 # build binaries
 - GOOS=linux GOARCH=amd64 go build -o game
 - GOOS=windows GOARCH=amd64 go build -o game.exe
-- pwd
-- ls
 
 after_success:
 # publish coverage report
