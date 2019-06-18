@@ -3,10 +3,10 @@ language: go
 sudo: required
 
 matrix:
-- go: 1.12.x
-  env: BUILD=true
 - go: 1.x
 - go: master
+- go: 1.12.x
+  env: BUILD=true
   allow_failures:
   - go: 1.x
   - go: master
@@ -28,9 +28,6 @@ script:
 
 # run unit tests with coverage
 - bash <(curl -s https://raw.githubusercontent.com/vehsamrak/go-multi-package-coverage/1.1.0/test.sh)
-
-# run integration tests
-- go test -v ./test/integration/...
 
 # build binaries
 - if [ "${BUILD}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="logshare.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
