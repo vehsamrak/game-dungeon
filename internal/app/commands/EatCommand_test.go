@@ -72,7 +72,7 @@ func (suite *eatCommandTest) provideFoodAndCharacterHP() []struct {
 	initialHP   int
 	increasedHP int
 } {
-	food := app.Item{}.Create()
+	food := app.Item{}.Create("")
 	food.AddFlag(itemFlag.Food)
 
 	return []struct {

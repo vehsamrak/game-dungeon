@@ -26,7 +26,7 @@ func (suite *moveCommandTest) Test_Execute_CharacterAndDirectionAndRoomRepositor
 	for id, dataset := range suite.provideCharacterDirectionsAndRooms() {
 		command := commands.MoveCommand{}.Create(dataset.roomRepository)
 		character := suite.getCharacter()
-		item := app.Item{}.Create()
+		item := app.Item{}.Create("")
 		item.AddFlag(dataset.characterItemFlag)
 		character.AddItem(item)
 

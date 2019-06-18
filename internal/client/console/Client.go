@@ -9,6 +9,7 @@ import (
 	"github.com/vehsamrak/game-dungeon/internal/app/enum/itemFlag"
 	"github.com/vehsamrak/game-dungeon/internal/app/random"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -22,10 +23,14 @@ type Client struct {
 
 func (Client) Create() *Client {
 	character := app.Character{}.Create("console")
-	universalTool := app.Item{}.Create()
-	universalTool.AddFlag(itemFlag.MineTool)
-	universalTool.AddFlag(itemFlag.FishTool)
-	character.AddItem(universalTool)
+	pick := app.Item{}.Create("miner pick")
+	pick.AddFlag(itemFlag.MineTool)
+	fishingPole := app.Item{}.Create("fishing pole")
+	fishingPole.AddFlag(itemFlag.FishTool)
+	axe := app.Item{}.Create("forester axe")
+	axe.AddFlag(itemFlag.CutTreeTool)
+
+	character.AddItems([]*app.Item{pick, fishingPole, axe})
 
 	roomRepository := app.RoomMemoryRepository{}.Create(nil)
 	randomizer := random.Randomizer{}.Create()
@@ -61,9 +66,30 @@ func (client *Client) Start() {
 			switch input {
 			case "inventory":
 				client.outputNewline("Items:")
+
+				items := make(map[string]int)
 				for _, item := range client.character.Inventory() {
-					client.outputNewline(item)
+					itemName := item.Name()
+
+					_, ok := items[itemName]
+					if ok {
+						items[itemName] += 1
+					} else {
+						items[itemName] = 1
+					}
 				}
+
+				// sort inventory
+				var itemNames []string
+				for name := range items {
+					itemNames = append(itemNames, name)
+				}
+				sort.Strings(itemNames)
+
+				for _, itemName := range itemNames {
+					client.outputNewline(fmt.Sprintf("%s: %d", itemName, items[itemName]))
+				}
+
 				client.showEmptyLine()
 			default:
 				client.executeCommand(input)

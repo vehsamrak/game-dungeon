@@ -110,7 +110,7 @@ func (suite *fishCommandTest) createCharacterWithoutTools() *app.Character {
 }
 
 func (suite *fishCommandTest) createCharacterWithTool() *app.Character {
-	tool := app.Item{}.Create()
+	tool := app.Item{}.Create("")
 	tool.AddFlag(itemFlag.FishTool)
 	character := suite.createCharacterWithoutTools()
 	character.AddItem(tool)

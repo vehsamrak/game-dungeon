@@ -64,7 +64,7 @@ func (command *MineCommand) Execute(character Character, arguments ...string) (r
 
 	oreFound := command.random.RandomBoolean()
 	if room != nil && room.HasFlag(roomFlag.OreProbability) && oreFound {
-		ore := app.Item{}.Create()
+		ore := app.Item{}.Create("ore")
 		ore.AddFlag(itemFlag.ResourceOre)
 		character.AddItem(ore)
 

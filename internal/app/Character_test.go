@@ -64,7 +64,7 @@ func (suite *characterTest) Test_HasItemFlag_characterWithItems_validItemDetecti
 
 func (suite *characterTest) Test_AddItem_characterWithoutItems_characterMustReveiveItems() {
 	character := suite.createCharacter()
-	item := app.Item{}.Create()
+	item := app.Item{}.Create("")
 	items := []*app.Item{item, item}
 
 	character.AddItem(item)
@@ -90,10 +90,10 @@ func (suite *characterTest) provideFlagAndItems() []struct {
 	items            []*app.Item
 	characterHasFlag bool
 } {
-	axe := app.Item{}.Create()
+	axe := app.Item{}.Create("")
 	axe.AddFlag(itemFlag.CutTreeTool)
 
-	tree := app.Item{}.Create()
+	tree := app.Item{}.Create("")
 	tree.AddFlag(itemFlag.ResourceWood)
 
 	return []struct {

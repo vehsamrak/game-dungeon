@@ -31,7 +31,7 @@ func (suite *cutTreeCommandTest) Test_Execute_characterWithoutTool_noToolError()
 }
 
 func (suite *cutTreeCommandTest) Test_Execute_characterWithToolAndRoomHasTrees_treeAppearsInCharacterInventory() {
-	axe := app.Item{}.Create()
+	axe := app.Item{}.Create("")
 	axe.AddFlag(itemFlag.CutTreeTool)
 	character := &app.Character{}
 	character.AddItem(axe)

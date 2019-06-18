@@ -28,7 +28,7 @@ func (suite *exploreCommandTest) Test_Execute_characterCanFlyAndNoNearRooms_newR
 	for id, dataset := range suite.provideRoomBioms() {
 		character := suite.createCharacter()
 		character.Move(0, 0, dataset.z)
-		exploreItem := app.Item{}.Create()
+		exploreItem := app.Item{}.Create("")
 		exploreItem.AddFlag(itemFlag.CanFly)
 		exploreItem.AddFlag(itemFlag.CliffWalk)
 		character.AddItem(exploreItem)
@@ -136,7 +136,7 @@ func (suite *exploreCommandTest) Test_Execute_characterCanExploreAirOrCliff_biom
 	for id, dataset := range suite.provideExploreItemAndBiom() {
 		character := suite.createCharacter()
 		character.Move(0, 0, dataset.z)
-		flyItem := app.Item{}.Create()
+		flyItem := app.Item{}.Create("")
 		flyItem.AddFlag(dataset.itemFlag)
 		character.AddItem(flyItem)
 		roomRepository := &app.RoomMemoryRepository{}

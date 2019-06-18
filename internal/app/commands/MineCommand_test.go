@@ -276,7 +276,7 @@ func (suite *mineCommandTest) createCharacterWithoutTool() *app.Character {
 }
 
 func (suite *mineCommandTest) createCharacterWithTool() *app.Character {
-	tool := app.Item{}.Create()
+	tool := app.Item{}.Create("")
 	tool.AddFlag(itemFlag.MineTool)
 	character := app.Character{}.Create("")
 	character.AddItem(tool)
