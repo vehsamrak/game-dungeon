@@ -15,9 +15,6 @@ before_install:
 # rename package name for imports
 - mv $HOME/gopath/src/github.com/Vehsamrak $HOME/gopath/src/github.com/vehsamrak
 
-# gox simplifies building for multiple architectures
-- go get github.com/mitchellh/gox
-
 script:
 # download dependencies
 - go get -t -v ./...
@@ -30,9 +27,24 @@ script:
 - bash <(curl -s https://raw.githubusercontent.com/vehsamrak/go-multi-package-coverage/1.1.0/test.sh)
 
 # build binaries
-- if [ "${BUILD}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="logshare.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
+- GOOS=linux GOARCH=amd64 go build -o game
+- GOOS=windows GOARCH=amd64 go build -o game.exe
+- pwd
 - ls
 
 after_success:
 # publish coverage report
 - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: Zyllqca1VwCKi0GdexitJ74+AI8/AlVzpbWhpmMwghHya/c3iQZIf8tOpImlWBi3uriQZ1hDx8A9m00EWkv36JCBoHdqnFNLXQpPRmneDtSaKxuZsO3k4/Zjdeebw2ogTCAPL9rfR0it5UjKSuHeYQPqnPSlc8h6+TLsZDIDg7G4WPg44Rwv5sEoVe/qA+S3cRVVYFJ3CmNVJvV79e2fCULZzxEI4I4kPqdIlFnmcD1YBaPiCJBU4kVH/z5Tvs292g9IzQHyg0poUHdsliZAy+6vltZrl1tmsjWorg9BCU4UjyVuCROgWEe+3VICP3tqlPPERR0pXWTolMQdX9p5l2EQ+otinpjZs8woG+71VGcvdws88+FolqDc0feekNztm+nbMPlqbmcX9qQMx0H1ZpXSnury3+sdRiqYDRUgSCC2VFJw1W4xxzdTcDRd5MV4OM94YxoIb1lDhbVIvyDxr9cqQm6Vh7oIFz/d2zegBbDFYOD5/59/sYrjJcDw9O6zEMpiXbT+XPHLBtTojztTvCpr0Zo5nhjRYnkl3wYTTQLb1HEITC8eId3pLmmo9zCoU8ZCDnqlxjLr/tpku37wBEgqLmwnav9aXP70y8AEIrhOdAYlBypgJJsr/u9U6m5H+lbBKKyrHjV+ctctADQ7HuC1JAZYMRBzVYyEz8I8az4=
+  file:
+  - game
+  - game.exe
+  on:
+    repo: vehsamrak/game-dungeon
+    tags: true
+    condition: $LATEST = true
