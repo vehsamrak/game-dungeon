@@ -31,8 +31,8 @@ script:
 - bash <(curl -s https://raw.githubusercontent.com/vehsamrak/go-multi-package-coverage/1.1.0/test.sh)
 
 # build binaries
-- GOOS=linux GOARCH=amd64 go build -o game
-- GOOS=windows GOARCH=amd64 go build -o game.exe
+- GOOS=linux GOARCH=amd64 go build -o game-linux-64-$(git describe --tags)
+- GOOS=windows GOARCH=amd64 go build -o game-windows-$(git describe --tags).exe
 
 after_success:
 # publish coverage report
@@ -44,8 +44,8 @@ deploy:
   api_key:
     secure: FgGDvHJrpzqxBWYzttGb1E1OhgChR8gk2weVFbnN/rmk3nCabxJgc+iRFJtKUnlCG23oPnnAxJFMw9LcXzBtwxOwv0wtprgw/SdMuLaQFp+sfesxbyLaa/Uvb8cyRkX7IcI48mWOZ42eTsEyjF/Y/nR5gTjg1sF1S5yweG63HmPKZZye+MJiTea6/2gV35uoEv9HTxL8vRtrHAU0vBK2fiN069qQxEikZugVmNB+JxNf919kYvWhhpzCfTw95Z4jFQesPqZiyfYH8nxYySQv6ORRHhkNePs+Myjt+S/Q0xkRw4GELaJ6t9qmuaOyt+VBcJ1VzmKzlk0zsnK8RwQ0JCcCOY2HIXPhroQ9B0uqwqjXGHkL9741EzG7YCKY6tlvlFGtyvK6AUzZ9KhxMFFtP0poorN9Isr3bb2VO9UzDbGEkVdXjoIkOqgixTLYTSm7MMOaGfEyB2/P27lHLV7DobjF5XsSCFX7OxhtdflFw3FcF4r5vGAV9TlLkXDO4ISTd+Uj7prT6AQc5wTIVkFKeqsjiHrZnkdMGgHM02fJQ4bx0jJkNtKsGihcI7fEZcd3YFSpq/G6cHnxkMnIg6QMdfqXXzPBugYDLrHlrcEECmfrrbIzlk608ABO8rRX5u+U1ShPZuahirOorbM7CHYCDfL5UitCJWUVpjDHWgaZRsw=
   file:
-  - game
-  - game.exe
+  - game-linux-64-$(git describe --tags)
+  - game-windows-$(git describe --tags).exe
   on:
     repo: Vehsamrak/game-dungeon
     tags: true
